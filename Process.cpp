@@ -35,8 +35,19 @@ class Process {
         }
 
         int getTurnaroundTime() {
-            i
+            if(completionTime == -1) {
+                return -1;
+            }
+            return completionTime - arrival;
         }
+
+        int getWaitTime() {
+            if(completionTime == -1) {
+                return -1;
+            }
+            return completionTime - arrival - burst - ioTime;
+        }
+
         int getArrival() {
             return arrival;
         }
