@@ -12,6 +12,30 @@ class Process {
         int ioTime;
         int ioTimeLeft;
     public:
+        Process() {
+            arrival = -1;
+            burst = -1;
+            burstLeft = -1;
+            completionTime = -1;
+            deadline = -1;
+            priority = -1;
+            ioTime = -1;
+            ioTimeLeft = -1;
+        }
+
+        Process(int arrival, int burst, int deadline, int priority, int ioTime) {
+            this->arrival = arrival;
+            this->burst = burst;
+            this->burstLeft = burst;
+            this->deadline = deadline;
+            this->priority = priority;
+            this->ioTime = ioTime;
+            this->ioTimeLeft = ioTime;
+        }
+
+        int getTurnaroundTime() {
+            i
+        }
         int getArrival() {
             return arrival;
         }
@@ -69,6 +93,4 @@ class Process {
         int setIoTimeLeft(int io_time_left) {
             ioTimeLeft = io_time_left;
         }
-
-
 };
