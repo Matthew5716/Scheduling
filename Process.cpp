@@ -31,6 +31,7 @@ class Process {
             this->priority = priority;
             this->ioTime = ioTime;
             this->ioTimeLeft = ioTime;
+            this->completionTime = -1;
         }
 
         int getTurnaroundTime() {
