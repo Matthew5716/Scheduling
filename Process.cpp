@@ -23,14 +23,14 @@ Process::Process(int arrival, int burst, int deadline, int priority, int ioTime)
     this->completionTime = -1;
 }
 
-Process::getTurnaroundTime() {
+int Process::getTurnaroundTime() {
     if (completionTime == -1) {
         return -1;
     }
     return completionTime - arrival;
 }
 
-Process::getWaitTime() {
+int Process::getWaitTime() {
     if (completionTime == -1) {
         return -1;
     }
