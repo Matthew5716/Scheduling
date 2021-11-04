@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include "InputManager.h"
+#include "Process.h" //temporary include for process
 using namespace std;
 
 void InputManager::welcomeMessage() {
@@ -30,10 +31,6 @@ void InputManager::setAlgorithmType() {
     algorithmType = input;
 };
 
-int InputManager::getAlgorithmType() {
-    return algorithmType;
-}
-
 void InputManager::setReadType() {
     cout << endl << "Choose if you would like to read from a file or manually input processes:" << endl;
     cout << "Enter \'0\' to read from a file, and enter \'1\' to manually enter processes" << endl;
@@ -49,10 +46,6 @@ void InputManager::setReadType() {
         }
     }
     readType = input;
-}
-
-int InputManager::getReadType() {
-    return readType;
 }
 
 void InputManager::readFile() {
@@ -215,6 +208,7 @@ bool InputManager::goodInput(int input) {
 }
 
 int main() {
+    vector <Process> processes;
     InputManager input;
     input.welcomeMessage();
     input.setAlgorithmType();
