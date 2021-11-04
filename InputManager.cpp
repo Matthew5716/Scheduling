@@ -200,6 +200,40 @@ int InputManager::getRealTimeType() {
     return realTimeType;
 }
 
+void InputManager::setNumQueues() {
+    cout << "How many queues would you like MFQS to use (2-5)?" << endl;
+    cout << "Input your choice here: ";
+    int input;
+    cin >> input;
+    
+    if (input < 2 || input > 5) {
+        while (input < 2 || input > 5) {
+            cout << "The number you entered is out of range for number of queues." << endl;
+            cout << "How many queus would you like MFQS to use (2-5)?" << endl;
+            cout << "Input your choice here: ";
+            cin >> input;
+        }
+    }
+    numQueues = input;
+}
+
+int InputManager::getNumQueues() {
+    return numQueues;
+}
+
+void InputManager::setTimeQuantum() {
+    cout << "What time quantum do you want MFQS to use?" << endl;
+    cout << "Input your choice here: ";
+    int input;
+    cin >> input;
+    
+    timeQuantum = input;
+}
+
+int InputManager::getTimeQuantum() {
+    return timeQuantum;
+}
+
 bool InputManager::goodInput(int input) {
     if(input == 1 || input == 0) {
         return true;
@@ -216,6 +250,9 @@ int main() {
     
     if(input.getAlgorithmType() == 1) {   //real time algorithm
         input.setRealTimeType();
+    } else {
+        input.setNumQueues();
+        input.setTimeQuantum();
     }
 
     input.setReadType();
