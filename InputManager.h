@@ -7,6 +7,8 @@ private:
     int algorithmType; //0 is MFQS and 1 is Real Time
     int readType; //0 is read from file and 1 is read from user
     int realTimeType; //0 is soft and 1 is hard
+    int numQueues;
+    int timeQuantum;
     bool handleIO; 
     int pid, burst, arrival, priority, deadline, io;
 
@@ -25,6 +27,12 @@ public:
 
     void setRealTimeType();
     int getRealTimeType();
+
+    void setNumQueues();
+    int getNumQueues();
+
+    void setTimeQuantum();
+    int getTimeQuantum();
 
     bool goodInput(int input);
 
