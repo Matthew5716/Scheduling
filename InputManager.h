@@ -3,13 +3,17 @@
 
 class InputManager {
 
-public:
-void setAlgorithmType(int input);
-int getAlgorithmType();
-
-
 private:
-int algorithmType;
+    int algorithmType; //0 is MFQS and 1 is Real Time
+    int readType; //0 is read from file and 1 is read from user
+    bool handleIO; 
+
+
+public:
+    void welcomeMessage();
+    void setAlgorithmType();
+    int getAlgorithmType();
+    bool goodInput(int input);
   
 };
 
