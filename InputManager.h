@@ -17,10 +17,10 @@ public:
     void welcomeMessage();
 
     void setAlgorithmType();
-    int getAlgorithmType();
+    int getAlgorithmType() { return algorithmType; };
 
     void setReadType();
-    int getReadType();
+    int getReadType() { return readType; };
 
     void readFile();
     void readFromUser();
