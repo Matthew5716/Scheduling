@@ -1,5 +1,6 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
+#include "Process.h"
 
 class InputManager {
 
@@ -35,6 +36,7 @@ public:
     int getTimeQuantum();
 
     bool goodInput(int input);
+    bool isSanitized(Process process);
 
 };
 

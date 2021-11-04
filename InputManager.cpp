@@ -207,6 +207,18 @@ bool InputManager::goodInput(int input) {
     return false;
 }
 
+bool InputManager::isSanitized(Process process) {
+    if (process.getArrival < 0 || process.getPriority < 0 || process.getIoTime < 0) {
+        return false;
+    }
+
+    if (process.getBurst <= 0 || process.getDeadline <= 0) {
+        return false;
+    }
+
+    return true;
+}
+
 int main() {
     vector <Process> processes;
     InputManager input;
