@@ -155,7 +155,7 @@ void InputManager::readFromUser() {
     cout << "For each process, you will be prompted for burst, arrival, priority, deadline, and I/O." << endl;
     
     bool exitFlag = false;
-    int pID;
+    int pID = 0;
     int burst;
     int arrival;
     int priority;
@@ -177,12 +177,34 @@ void InputManager::readFromUser() {
         cin >> io;
         cout << "*** Would you like to input another process? (\'y\'/\'n\')***" << endl;
         cin >> anotherProcess;
-        if (anotherProcess == "n") {
+        if (anotherProcess != "y" && anotherProcess != "Y") {
             exitFlag = true;
         }
+        anotherProcess = "";            //not sure if this matters 
     }
-    
 
+
+}
+
+void InputManager::setRealTimeType() {
+    cout << endl << "Choose the type of Real Time Algorithm" << endl;
+    cout << "Enter \'0\' for Soft RT, and enter \'1\' for Hard RT." << endl;
+    cout << "Input your choice here: ";
+    int input;
+    cin >> input;
+    if (!goodInput(input)) {
+        while (!goodInput(input)) {
+            cout << "Please only input values 1 and 0." << endl;
+            cout << "Enter \'0\' to read from a file, and enter \'1\'  to manually enter processes" << endl;
+            cout << "Input your choice here: ";
+            cin >> input;
+        }
+    }
+    realTimeType = input;
+}
+
+int InputManager::getRealTimeType() {
+    return realTimeType;
 }
 
 bool InputManager::goodInput(int input) {
@@ -197,8 +219,14 @@ int main() {
     input.welcomeMessage();
     input.setAlgorithmType();
     cout << input.getAlgorithmType() << endl;
+    
+    if(input.getAlgorithmType() == 1) {   //real time algorithm
+        input.setRealTimeType();
+    }
+
     input.setReadType();
     cout << input.getReadType() << endl;
+
 
     if(input.getReadType() == 0) {         
         input.readFile();       
