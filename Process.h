@@ -8,7 +8,7 @@ private:
     int burst;
     int burstLeft;
     int completionTime;
-    int deadline;
+    int deadLine;
     int priority;
     int ioTime;
     int ioTimeLeft;
