@@ -1,6 +1,8 @@
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
 #include "InputManager.h"
 using namespace std;
 
@@ -53,18 +55,43 @@ int InputManager::getReadType() {
 }
 
 void InputManager::readFile() {
-    ifstream myfile; 
-    string fileContent;
-    myfile.open("test.txt");
-    getline(file, line); // ignore first line of column headers
-    if (myfile.is_open() ) { 
-        char mychar;
-        while ( myfile ) {
-        mychar = myfile.get();
-        cout << mychar;
+    ifstream inputFile; 
+    int lineCount = 0;
+    string fileLine;
+    string pidString;
+    string burstString;
+    inputFile.open("test.txt");
+    getline(inputFile, fileLine); // ignore first line of column headers
+    if (inputFile.is_open() ) { 
+        char fileChars;
+        while (inputFile) {
+            fileChars = inputFile.get();
+
+            if(fileChars == '\t') {
+                lineCount = 1;
+            } else if (lineCount == 0) {
+                pidString += fileChars;
+            }
+
+            if(fileChars == '\t') {
+                lineCount = 2;
+            } else if (lineCount == 1){
+                burstString += fileChars;
+            }
+
+            if(fileChars == '\n') {
+                cout << "Pid: " << pidString << endl;
+                cout << "Burst: " << burstString << endl;
+
+
+                cout << "Add New Process:" << endl;
+                lineCount = 0;
+                pidString = "";
+                burstString = "";
+            }
         }
     }   
-    myfile.close();
+    inputFile.close();
 }
 
 bool InputManager::goodInput(int input) {
