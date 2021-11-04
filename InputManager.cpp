@@ -150,6 +150,41 @@ void InputManager::readFile() {
     inputFile.close();
 }
 
+void InputManager::readFromUser() {
+    cout << endl << "You have chosen to input your processes manually." << endl;
+    cout << "For each process, you will be prompted for burst, arrival, priority, deadline, and I/O." << endl;
+    
+    bool exitFlag = false;
+    int pID;
+    int burst;
+    int arrival;
+    int priority;
+    int deadline;
+    int io;
+    string anotherProcess;
+
+    while(!exitFlag) {
+        pID++;
+        cout << "Input Process " << pID << " Burst: ";
+        cin >> burst;
+        cout << "Input Process " << pID << " Arrival: ";
+        cin >> arrival;
+        cout << "Input Process " << pID << " Priority: ";
+        cin >> priority;
+        cout << "Input Process " << pID << " Deadline: ";
+        cin >> deadline;
+        cout << "Input Process " << pID << " I/O: ";
+        cin >> io;
+        cout << "*** Would you like to input another process? (\'y\'/\'n\')***" << endl;
+        cin >> anotherProcess;
+        if (anotherProcess == "n") {
+            exitFlag = true;
+        }
+    }
+    
+
+}
+
 bool InputManager::goodInput(int input) {
     if(input == 1 || input == 0) {
         return true;
@@ -165,6 +200,11 @@ int main() {
     input.setReadType();
     cout << input.getReadType() << endl;
 
-    input.readFile();
+    if(input.getReadType() == 0) {         
+        input.readFile();       
+    } else {
+        input.readFromUser();
+    }
+
     return 0;
 };

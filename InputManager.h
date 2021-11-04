@@ -20,6 +20,7 @@ public:
     int getReadType();
 
     void readFile();
+    void readFromUser();
 
     bool goodInput(int input);
 
