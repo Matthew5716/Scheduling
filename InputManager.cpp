@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include "InputManager.h"
 using namespace std;
@@ -51,6 +52,21 @@ int InputManager::getReadType() {
     return readType;
 }
 
+void InputManager::readFile() {
+    ifstream myfile; 
+    string fileContent;
+    myfile.open("test.txt");
+    getline(file, line); // ignore first line of column headers
+    if (myfile.is_open() ) { 
+        char mychar;
+        while ( myfile ) {
+        mychar = myfile.get();
+        cout << mychar;
+        }
+    }   
+    myfile.close();
+}
+
 bool InputManager::goodInput(int input) {
     if(input == 1 || input == 0) {
         return true;
@@ -65,5 +81,7 @@ int main() {
     cout << input.getAlgorithmType() << endl;
     input.setReadType();
     cout << input.getReadType() << endl;
+
+    input.readFile();
     return 0;
 };
