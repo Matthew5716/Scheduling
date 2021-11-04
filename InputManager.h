@@ -13,8 +13,9 @@ public:
     void welcomeMessage();
     void setAlgorithmType();
     int getAlgorithmType();
+    void setReadType();
+    int getReadType();
     bool goodInput(int input);
-  
 };
 
 

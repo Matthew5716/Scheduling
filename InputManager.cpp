@@ -30,6 +30,27 @@ int InputManager::getAlgorithmType() {
     return algorithmType;
 }
 
+void InputManager::setReadType() {
+    cout << endl << "Choose if you would like to read from a file or manually input processes:" << endl;
+    cout << "Enter \'0\' to read from a file, and enter \'1\' to manually enter processes" << endl;
+    cout << "Input your choice here: ";
+    int input;
+    cin >> input;
+    if (!goodInput(input)) {
+        while (!goodInput(input)) {
+            cout << "Please only input values 1 and 0." << endl;
+            cout << "Enter \'0\' to read from a file, and enter \'1\'  to manually enter processes" << endl;
+            cout << "Input your choice here: ";
+            cin >> input;
+        }
+    }
+    readType = input;
+}
+
+int InputManager::getReadType() {
+    return readType;
+}
+
 bool InputManager::goodInput(int input) {
     if(input == 1 || input == 0) {
         return true;
@@ -42,6 +63,7 @@ int main() {
     input.welcomeMessage();
     input.setAlgorithmType();
     cout << input.getAlgorithmType() << endl;
-
+    input.setReadType();
+    cout << input.getReadType() << endl;
     return 0;
 };
