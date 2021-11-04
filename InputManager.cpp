@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <sstream>
 #include <string>
 #include "InputManager.h"
 using namespace std;
@@ -60,35 +61,90 @@ void InputManager::readFile() {
     string fileLine;
     string pidString;
     string burstString;
+    string arrivalString;
+    string priorityString;
+    string deadlineString;
+    string IOString;
     inputFile.open("test.txt");
     getline(inputFile, fileLine); // ignore first line of column headers
-    if (inputFile.is_open() ) { 
-        char fileChars;
-        while (inputFile) {
-            fileChars = inputFile.get();
+    if (inputFile.is_open() ) {
+        string line;
+        while(getline(inputFile, line)){
+            int len = line.length();
+            char lineChars[len+1];
+            int itemCount = 0;
+            strcpy(lineChars, line.c_str());
 
-            if(fileChars == '\t') {
-                lineCount = 1;
-            } else if (lineCount == 0) {
-                pidString += fileChars;
+            for (int i = 0; i < len; i++) {
+                if(itemCount == 0) {
+                    if(lineChars[i] != '\t') {
+                        pidString += lineChars[i];
+                    } else {
+                        itemCount = 1;
+                        i++;
+                    }
+                }
+
+                if(itemCount == 1) {
+                    if(lineChars[i] != '\t') {
+                        burstString += lineChars[i];
+                    } else {
+                        itemCount = 2;
+                        i++;
+                    }
+                }
+
+                if(itemCount == 2) {
+                    if(lineChars[i] != '\t') {
+                        arrivalString += lineChars[i];
+                    } else {
+                        itemCount = 3;
+                        i++;
+                    }
+                }
+
+                if(itemCount == 3) {
+                    if(lineChars[i] != '\t') {
+                        priorityString += lineChars[i];
+                    } else {
+                        itemCount = 4;
+                        i++;
+                    }
+                }
+
+                if(itemCount == 4) {
+                    if(lineChars[i] != '\t') {
+                        deadlineString += lineChars[i];
+                    } else {
+                        itemCount = 5;
+                        i++;
+                    }
+                }
+
+                if(itemCount == 5) {
+                    if(lineChars[i] != '\t') {
+                        IOString += lineChars[i];
+                    } else {
+                        itemCount = 6;
+                        i++;
+                    }
+                }
+
             }
 
-            if(fileChars == '\t') {
-                lineCount = 2;
-            } else if (lineCount == 1){
-                burstString += fileChars;
-            }
-
-            if(fileChars == '\n') {
-                cout << "Pid: " << pidString << endl;
-                cout << "Burst: " << burstString << endl;
-
-
-                cout << "Add New Process:" << endl;
-                lineCount = 0;
-                pidString = "";
-                burstString = "";
-            }
+            cout << "pid: " << pidString << endl;
+            cout << "burst: " << burstString << endl;
+            cout << "arrival: " << arrivalString << endl;
+            cout << "priority: " << priorityString << endl;
+            cout << "priority: " << deadlineString << endl;
+            cout << "priority: " << IOString << endl;
+            cout << endl;
+            pidString = "";
+            burstString = "";
+            arrivalString = "";
+            priorityString = "";
+            deadlineString = "";
+            IOString = "";
         }
     }   
     inputFile.close();
