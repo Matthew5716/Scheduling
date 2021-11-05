@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 #include "InputManager.h"
-#include "Process.h" //temporary include for process
+#include "Process.cpp" //temporary include for process
 using namespace std;
 
 void InputManager::welcomeMessage() {
@@ -126,13 +126,24 @@ void InputManager::readFile() {
             }
 
             pid = stoi(pidString);
+            burst = stoi(burstString);
+            arrival = stoi(arrivalString);
+            priority = stoi(priorityString);
+            deadline = stoi(deadlineString);
+            io = stoi(IOString);
 
             cout << "pid: " << pid << endl;
-            cout << "burst: " << burstString << endl;
-            cout << "arrival: " << arrivalString << endl;
-            cout << "priority: " << priorityString << endl;
-            cout << "priority: " << deadlineString << endl;
-            cout << "priority: " << IOString << endl;
+            cout << "burst: " << burst << endl;
+            cout << "arrival: " << arrival << endl;
+            cout << "priority: " << priority << endl;
+            cout << "deadline: " << deadline << endl;
+            cout << "io: " << io << endl;
+
+            Process newProcess = Process(arrival, burst, deadline, priority, io);
+
+            if (isSanitized(newProcess)) {
+                cout << "pid: " << pid << " is sanitized " <<endl;
+            }
 
             cout << endl;
             pidString = "";
@@ -178,8 +189,6 @@ void InputManager::readFromUser() {
         }
         anotherProcess = "";            //not sure if this matters 
     }
-
-
 }
 
 void InputManager::setRealTimeType() {
