@@ -125,12 +125,15 @@ void InputManager::readFile() {
 
             }
 
-            cout << "pid: " << pidString << endl;
+            pid = stoi(pidString);
+
+            cout << "pid: " << pid << endl;
             cout << "burst: " << burstString << endl;
             cout << "arrival: " << arrivalString << endl;
             cout << "priority: " << priorityString << endl;
             cout << "priority: " << deadlineString << endl;
             cout << "priority: " << IOString << endl;
+
             cout << endl;
             pidString = "";
             burstString = "";
@@ -242,11 +245,11 @@ bool InputManager::goodInput(int input) {
 }
 
 bool InputManager::isSanitized(Process process) {
-    if (process.getArrival < 0 || process.getPriority < 0 || process.getIoTime < 0) {
+    if (process.getArrival() < 0 || process.getPriority() < 0 || process.getIoTime() < 0) {
         return false;
     }
 
-    if (process.getBurst <= 0 || process.getDeadline <= 0) {
+    if (process.getBurst() <= 0 || process.getDeadline() <= 0) {
         return false;
     }
 
