@@ -28,13 +28,13 @@ public:
     int getIoTime() { return ioTime; }
     int getIoTimeLeft() { return ioTimeLeft; }
     // Setters
-    int setArrival(int arr) { arrival = arr; }
-    int setBurst(int b) { burst = b;}
-    int setBurstLeft(int burstL) { burstLeft = burstL; }
-    int setCompletionTime(int compTime) { completionTime = compTime; }
-    int setDeadline(int dead_line) { deadline = dead_line; }
-    int setPriority(int prior) { priority = prior; }
-    int setIoTime(int io_time) { ioTime = io_time; }
-    int setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
+    void setArrival(int arr) { arrival = arr; }
+    void setBurst(int b) { burst = b;}
+    void setBurstLeft(int burstL) { burstLeft = burstL; }
+    void setCompletionTime(int compTime) { completionTime = compTime; }
+    void setDeadline(int dead_line) { deadline = dead_line; }
+    void setPriority(int prior) { priority = prior; }
+    void setIoTime(int io_time) { ioTime = io_time; }
+    void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
 };
 #endif //SCHED_PROCESS_H
