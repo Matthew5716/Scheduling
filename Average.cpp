@@ -1,4 +1,4 @@
-#include "Average.h";
+#include "Average.h"
 
 
 double Average::getAverageWaitTime() {

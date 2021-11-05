@@ -1,8 +1,8 @@
 CC = g++
-CFLAGS = -wall -g
+CFLAGS = -Wall -g
 
-schedule: main.o Scheduler.o InputManager.o Process.o Average.0
-	$(CC) $(CFLAGS) -o schedule main.o Scheduler.o InputManger.o Process.o Average.o
+schedule: main.o Scheduler.o InputManager.o Process.o Average.o
+	$(CC) $(CFLAGS) -o schedule main.o Scheduler.o InputManager.o Process.o Average.o
 
 main.o: Scheduler.h InputManager.h Process.h
 	$(CC) $(CFLAGS) -c main.cpp
