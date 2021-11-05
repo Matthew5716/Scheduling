@@ -21,5 +21,7 @@ Process.o: Process.cpp Process.h
 
 clean:
 	rm -f *.o
+	rm -f *.out
+	rm -f *.gch
 	rm -f *~
 	rm -f schedule

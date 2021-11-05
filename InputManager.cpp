@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 #include "InputManager.h"
-#include "Process.cpp" //temporary include for process
+#include "Process.h" //temporary include for process
 using namespace std;
 
 void InputManager::welcomeMessage() {
