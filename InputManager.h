@@ -1,5 +1,6 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
+#include <vector>
 #include "Process.h"
 
 class InputManager {
@@ -23,7 +24,7 @@ public:
     void setReadType();
     int getReadType() { return readType; };
 
-    void readFile();
+    std::vector <Process> readFile();
     void readFromUser();
 
     void setRealTimeType();

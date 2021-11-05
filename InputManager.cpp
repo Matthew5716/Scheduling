@@ -48,9 +48,10 @@ void InputManager::setReadType() {
     readType = input;
 }
 
-void InputManager::readFile() {
+std::vector <Process> InputManager::readFile() {
     ifstream inputFile; 
     int lineCount = 0;
+    int processCount = 0;
     string fileLine;
     string pidString;
     string burstString;
@@ -58,6 +59,7 @@ void InputManager::readFile() {
     string priorityString;
     string deadlineString;
     string IOString;
+    std::vector <Process> processes;
     inputFile.open("test.txt");
     getline(inputFile, fileLine); // ignore first line of column headers
     if (inputFile.is_open() ) {
@@ -143,6 +145,8 @@ void InputManager::readFile() {
 
             if (isSanitized(newProcess)) {
                 cout << "pid: " << pid << " is sanitized " <<endl;
+                processes.push_back(newProcess);
+                processCount++;
             }
 
             cout << endl;
@@ -155,6 +159,7 @@ void InputManager::readFile() {
         }
     }   
     inputFile.close();
+    return processes;
 }
 
 void InputManager::readFromUser() {
@@ -284,7 +289,15 @@ int main() {
 
 
     if(input.getReadType() == 0) {         
-        input.readFile();       
+        processes = input.readFile();  
+
+        cout << "vector size: " <<processes.size() << endl;
+
+        for (int i = 0; i < processes.size(); i++) {
+            cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
+        }
+            
+            
     } else {
         input.readFromUser();
     }
