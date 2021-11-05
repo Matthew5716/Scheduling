@@ -36,5 +36,10 @@ public:
     void setPriority(int prior) { priority = prior; }
     void setIoTime(int io_time) { ioTime = io_time; }
     void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
+
+    // methods
+    bool operator < (const Process& process) { return arrival < process.arrival; }
+    static bool arrivalComparator(Process& lhs, Process& rhs) { return lhs.getArrival() < rhs.getArrival() ;}
+
 };
 #endif //SCHED_PROCESS_H
