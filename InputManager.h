@@ -26,7 +26,7 @@ public:
     void setReadType();
     int getReadType() { return readType; };
 
-    vector <Process> readFile();
+    void readFile();
     void readFromUser();
 
     void setRealTimeType();

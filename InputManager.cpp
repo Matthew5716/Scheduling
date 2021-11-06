@@ -48,7 +48,7 @@ void InputManager::setReadType() {
     readType = input;
 }
 
-std::vector <Process> InputManager::readFile() {
+void InputManager::readFile() {
     ifstream inputFile; 
     int lineCount = 0;
     int processCount = 0;
@@ -59,7 +59,7 @@ std::vector <Process> InputManager::readFile() {
     string priorityString;
     string deadlineString;
     string IOString;
-    std::vector <Process> processes;
+//    std::vector <Process> processes;
     inputFile.open("test.txt");
     getline(inputFile, fileLine); // ignore first line of column headers
     if (inputFile.is_open() ) {
@@ -162,38 +162,48 @@ std::vector <Process> InputManager::readFile() {
     return processes;
 }
 
-void InputManager::readFromUser() {
+std::vector <Process> InputManager::readFromUser() {
     cout << endl << "You have chosen to input your processes manually." << endl;
     cout << "For each process, you will be prompted for burst, arrival, priority, deadline, and I/O." << endl;
     
+//    std::vector <Process> processes;
     bool exitFlag = false;
-    int pID = 0;
-    int burst;
-    int arrival;
-    int priority;
-    int deadline;
-    int io;
-    string anotherProcess;
+    pid = 0;
+    int processCount = 0;
 
     while(!exitFlag) {
-        pID++;
-        cout << "Input Process " << pID << " Burst: ";
+        //pid++;
+        cout << "Input Process " << pid << " Burst: ";
         cin >> burst;
-        cout << "Input Process " << pID << " Arrival: ";
+        cout << "Input Process " << pid << " Arrival: ";
         cin >> arrival;
-        cout << "Input Process " << pID << " Priority: ";
+        cout << "Input Process " << pid << " Priority: ";
         cin >> priority;
-        cout << "Input Process " << pID << " Deadline: ";
+        cout << "Input Process " << pid << " Deadline: ";
         cin >> deadline;
-        cout << "Input Process " << pID << " I/O: ";
+        cout << "Input Process " << pid << " I/O: ";
         cin >> io;
-        cout << "*** Would you like to input another process? (\'y\'/\'n\')***" << endl;
+        
+        Process newProcess = Process(arrival, burst, deadline, priority, io);
+
+        if (isSanitized(newProcess)) {
+            cout << "pid: " << pid << " is sanitized " << endl;      
+            processes.push_back(newProcess);
+            processCount++;
+            pid++;
+        } else {
+            cout << "pid: " << pid << " contains invalid input, re-enter the data." << endl;
+        }
+
+        string anotherProcess;
+        cout << "* * * Would you like to input another process? (\'y\'/\'n\') * * *" << endl;
         cin >> anotherProcess;
         if (anotherProcess != "y" && anotherProcess != "Y") {
             exitFlag = true;
         }
-        anotherProcess = "";            //not sure if this matters 
+        anotherProcess = "";            
     }
+    return processes;
 }
 
 void InputManager::setRealTimeType() {
@@ -287,7 +297,7 @@ void InputManager::getInput() {
 
 
     if(getReadType() == 0) {
-        processes = readFile();
+        readFile();
 
         cout << "vector size: " <<processes.size() << endl;
 
@@ -300,6 +310,13 @@ void InputManager::getInput() {
 
     } else {
         readFromUser();
+        
+        cout << "vector size: " << processes.size() << endl;
+
+        sort(processes.begin(), processes.end());
+        for (int i = 0; i < processes.size(); i++) {
+            cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
+        }
     }
 }
 
