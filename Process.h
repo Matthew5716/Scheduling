@@ -12,6 +12,7 @@ private:
     int priority;
     int ioTime;
     int ioTimeLeft;
+    int queueIndex;
 public:
     // Constructor
     Process(); // default constructor
@@ -27,6 +28,7 @@ public:
     int getPriority() { return priority; }
     int getIoTime() { return ioTime; }
     int getIoTimeLeft() { return ioTimeLeft; }
+    int getQueueIndex() { return queueIndex; }
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
@@ -36,9 +38,16 @@ public:
     void setPriority(int prior) { priority = prior; }
     void setIoTime(int io_time) { ioTime = io_time; }
     void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
+    void setQueueIndex(int queue) { queueIndex = queue; }
 
     // methods
-    bool operator < (const Process& process) const { return arrival < process.arrival; }
+    bool operator < (const Process& process) const {
+        if( arrival != process.arrival) {
+            return arrival < process.arrival;
+        } else { // If arrival is the same put higher priority process first.
+            return priority > process.priority;
+        }
+    }
 
 };
 #endif //SCHED_PROCESS_H

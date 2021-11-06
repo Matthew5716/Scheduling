@@ -2,7 +2,7 @@
 #define INPUTMANAGER_H
 #include <vector>
 #include "Process.h"
-
+using std::vector;
 class InputManager {
 
 private:
@@ -11,7 +11,8 @@ private:
     int realTimeType; //0 is soft and 1 is hard
     int numQueues;
     int timeQuantum;
-    bool handleIO; 
+    bool handleIO;
+    int io_Offset;
     int pid, burst, arrival, priority, deadline, io;
     std::vector<Process> processes;
 
@@ -25,7 +26,7 @@ public:
     void setReadType();
     int getReadType() { return readType; };
 
-    std::vector <Process> readFile();
+    vector <Process> readFile();
     void readFromUser();
 
     void setRealTimeType();
@@ -37,10 +38,14 @@ public:
     void setTimeQuantum();
     int getTimeQuantum();
 
+    bool getHandleIO() { return handleIO; }
+    int getIO_Offset() { return io_Offset; }
+
     bool goodInput(int input);
     bool isSanitized(Process process);
 
     void getInput();
+    vector<Process>& getProcesses() { return processes; }
 
 };
 
