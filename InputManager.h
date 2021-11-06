@@ -26,7 +26,7 @@ public:
     int getReadType() { return readType; };
 
     std::vector <Process> readFile();
-    void readFromUser();
+    std::vector <Process> readFromUser();
 
     void setRealTimeType();
     int getRealTimeType();
