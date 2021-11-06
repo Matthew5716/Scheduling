@@ -159,10 +159,9 @@ void InputManager::readFile() {
         }
     }   
     inputFile.close();
-    return processes;
 }
 
-std::vector <Process> InputManager::readFromUser() {
+void InputManager::readFromUser() {
     cout << endl << "You have chosen to input your processes manually." << endl;
     cout << "For each process, you will be prompted for burst, arrival, priority, deadline, and I/O." << endl;
     
@@ -203,7 +202,6 @@ std::vector <Process> InputManager::readFromUser() {
         }
         anotherProcess = "";            
     }
-    return processes;
 }
 
 void InputManager::setRealTimeType() {
