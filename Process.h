@@ -38,8 +38,7 @@ public:
     void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
 
     // methods
-    bool operator < (const Process& process) { return arrival < process.arrival; }
-    static bool arrivalComparator(Process& lhs, Process& rhs) { return lhs.getArrival() < rhs.getArrival() ;}
+    bool operator < (const Process& process) const { return arrival < process.arrival; }
 
 };
 #endif //SCHED_PROCESS_H

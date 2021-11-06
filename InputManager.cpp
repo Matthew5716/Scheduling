@@ -270,37 +270,36 @@ bool InputManager::isSanitized(Process process) {
     return true;
 }
 
-int main() {
-    vector <Process> processes;
-    InputManager input;
-    input.welcomeMessage();
-    input.setAlgorithmType();
-    cout << input.getAlgorithmType() << endl;
-    
-    if(input.getAlgorithmType() == 1) {   //real time algorithm
-        input.setRealTimeType();
+void InputManager::getInput() {
+    welcomeMessage();
+    setAlgorithmType();
+    cout << getAlgorithmType() << endl;
+
+    if(getAlgorithmType() == 1) {   //real time algorithm
+        setRealTimeType();
     } else {
-        input.setNumQueues();
-        input.setTimeQuantum();
+        setNumQueues();
+        setTimeQuantum();
     }
 
-    input.setReadType();
-    cout << input.getReadType() << endl;
+    setReadType();
+    cout << getReadType() << endl;
 
 
-    if(input.getReadType() == 0) {         
-        processes = input.readFile();  
+    if(getReadType() == 0) {
+        processes = readFile();
 
         cout << "vector size: " <<processes.size() << endl;
+
+        sort(processes.begin(), processes.end());
+
 
         for (int i = 0; i < processes.size(); i++) {
             cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
         }
-            
-            
-    } else {
-        input.readFromUser();
-    }
 
-    return 0;
-};
+    } else {
+        readFromUser();
+    }
+}
+

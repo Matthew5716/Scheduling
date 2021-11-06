@@ -13,6 +13,7 @@ private:
     int timeQuantum;
     bool handleIO; 
     int pid, burst, arrival, priority, deadline, io;
+    std::vector<Process> processes;
 
 
 public:
@@ -38,6 +39,8 @@ public:
 
     bool goodInput(int input);
     bool isSanitized(Process process);
+
+    void getInput();
 
 };
 
