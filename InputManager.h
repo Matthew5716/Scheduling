@@ -38,7 +38,10 @@ public:
     void setTimeQuantum();
     int getTimeQuantum();
 
+    void setHandleIO();
     bool getHandleIO() { return handleIO; }
+
+    void setIO_Offset();
     int getIO_Offset() { return io_Offset; }
 
     bool goodInput(int input);

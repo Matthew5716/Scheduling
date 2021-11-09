@@ -259,6 +259,35 @@ int InputManager::getTimeQuantum() {
     return timeQuantum;
 }
 
+void InputManager::setHandleIO() {
+    cout << "Do you want to enter an I/O offset?" << endl;
+    cout << "Enter \'0\' to have NO I/O, and enter \'1\' to have I/O: ";
+    int input;
+    cin >> input;
+
+    while (!goodInput(input)) {
+        cout << "Please only input values 1 and 0." << endl;
+        cout << "Enter \'0\' to NOT enter I/O, and enter \'1\' enter I/O." << endl;
+        cout << "Input your choice here: ";
+        cin >> input;
+    }
+
+    if (input == 0) {
+        handleIO = 0;
+    } else {
+        handleIO = 1;
+    }
+
+}
+
+void InputManager::setIO_Offset() {
+    cout << endl << "What do you want your I/O offset to be?" << endl;
+    cout << "Enter an integer here: ";
+    int input;
+    cin >> input;
+    input = io_Offset;
+}
+
 bool InputManager::goodInput(int input) {
     if(input == 1 || input == 0) {
         return true;
@@ -288,6 +317,12 @@ void InputManager::getInput() {
     } else {
         setNumQueues();
         setTimeQuantum();
+    }
+
+    setHandleIO();
+
+    if(getHandleIO() == true) {
+        setIO_Offset();
     }
 
     setReadType();
