@@ -147,12 +147,12 @@ void InputManager::readFile() {
             Process newProcess = Process(arrival, burst, deadline, priority, io);
 
             if (isSanitized(newProcess)) {
-                cout << "pid: " << pid << " is sanitized " <<endl;
+                //cout << "pid: " << pid << " is sanitized " <<endl;
                 processes.push_back(newProcess);
                 processCount++;
             }
 
-            cout << endl;
+            //cout << endl;
             pidString = "";
             burstString = "";
             arrivalString = "";
@@ -254,7 +254,6 @@ void InputManager::setTimeQuantum() {
     cout << "Input your choice here: ";
     int input;
     cin >> input;
-    
     timeQuantum = input;
 }
 
@@ -288,7 +287,7 @@ void InputManager::setIO_Offset() {
     cout << "Enter an integer here: ";
     int input;
     cin >> input;
-    input = io_Offset;
+    io_Offset = input;
 }
 
 bool InputManager::goodInput(int input) {
@@ -308,8 +307,9 @@ bool InputManager::isSanitized(Process process) {
     }
 
     if (handleIO) {
+        //cout << "Handling IO" << endl << io_Offset << endl;
         if (process.getBurst() < io_Offset) {
-        return false;
+            return false;
         }
     }
     return true;
