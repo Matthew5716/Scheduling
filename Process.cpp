@@ -21,6 +21,7 @@ Process::Process(int arrival, int burst, int deadline, int priority, int ioTime)
     this->ioTime = ioTime;
     this->ioTimeLeft = ioTime;
     this->completionTime = -1;
+    this->endClockTick = -1;
 }
 
 int Process::getTurnaroundTime() {
@@ -36,3 +37,13 @@ int Process::getWaitTime() {
     }
     return completionTime - arrival - burst - ioTime;
 }
+ void Process::setEndClockTick(int currentClockTick, int ioOffset) {
+    if(ioTimeLeft <= 0 || burstLeft <= ioOffset) {
+        endClockTick = currentClockTick + burstLeft;
+    } else {
+        endClockTick = currentClockTick + ioOffset;
+    }
+}
+
+
+
