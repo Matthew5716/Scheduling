@@ -60,7 +60,10 @@ void InputManager::readFile() {
     string deadlineString;
     string IOString;
 //    std::vector <Process> processes;
-    inputFile.open("test.txt");
+    string fileName = "";
+    cout << "Enter the name of the text file you want to read: ";
+    cin >> fileName;
+    inputFile.open(fileName);
     getline(inputFile, fileLine); // ignore first line of column headers
     if (inputFile.is_open() ) {
         string line;
@@ -134,12 +137,12 @@ void InputManager::readFile() {
             deadline = stoi(deadlineString);
             io = stoi(IOString);
 
-            cout << "pid: " << pid << endl;
-            cout << "burst: " << burst << endl;
-            cout << "arrival: " << arrival << endl;
-            cout << "priority: " << priority << endl;
-            cout << "deadline: " << deadline << endl;
-            cout << "io: " << io << endl;
+            // cout << "pid: " << pid << endl;
+            // cout << "burst: " << burst << endl;
+            // cout << "arrival: " << arrival << endl;
+            // cout << "priority: " << priority << endl;
+            // cout << "deadline: " << deadline << endl;
+            // cout << "io: " << io << endl;
 
             Process newProcess = Process(arrival, burst, deadline, priority, io);
 
@@ -304,6 +307,11 @@ bool InputManager::isSanitized(Process process) {
         return false;
     }
 
+    if (handleIO) {
+        if (process.getBurst() < io_Offset) {
+        return false;
+        }
+    }
     return true;
 }
 
@@ -332,24 +340,30 @@ void InputManager::getInput() {
     if(getReadType() == 0) {
         readFile();
 
-        cout << "vector size: " <<processes.size() << endl;
+        if(processes.size() == 0) {
+            cout << "Unable to read file; file does not exist or error reading file." << endl;
+        } else {
+             cout << "Number of valid processes: " <<processes.size() << endl;
+        }
+
+       
 
         sort(processes.begin(), processes.end());
 
 
-        for (int i = 0; i < processes.size(); i++) {
-            cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
-        }
+        // for (int i = 0; i < processes.size(); i++) {
+        //     cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
+        // }
 
     } else {
         readFromUser();
         
-        cout << "vector size: " << processes.size() << endl;
+        cout << "Number of valid processes:: " << processes.size() << endl;
 
         sort(processes.begin(), processes.end());
-        for (int i = 0; i < processes.size(); i++) {
-            cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
-        }
+        // for (int i = 0; i < processes.size(); i++) {
+        //     cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
+        // }
     }
 }
 
