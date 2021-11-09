@@ -13,6 +13,7 @@ private:
     int ioTime;
     int ioTimeLeft;
     int queueIndex;
+    int endClockTick;
 public:
     // Constructor
     Process(); // default constructor
@@ -29,6 +30,7 @@ public:
     int getIoTime() { return ioTime; }
     int getIoTimeLeft() { return ioTimeLeft; }
     int getQueueIndex() { return queueIndex; }
+    int getEndClockTick() { return endClockTick; }
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
@@ -39,6 +41,10 @@ public:
     void setIoTime(int io_time) { ioTime = io_time; }
     void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
     void setQueueIndex(int queue) { queueIndex = queue; }
+    //calculates when the process should be kicked off cpu if not preempted.
+    void setEndClockTick(int currentClockTick, int ioOffset);
+    // if not handling I/O
+    void setEndClockTick(int currentClockTick) { endClockTick = currentClockTick + burstLeft; };
 
     // methods
     bool operator < (const Process& process) const {
