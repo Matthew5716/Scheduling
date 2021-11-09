@@ -26,7 +26,7 @@ Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues
 
 
 /**
- * Use clcok and processIndex to determine if any processes have arrived,
+ * Use clcok and process iterator to determine if any processes have arrived,
  * if so add them to the top queue. If no more processes set
  */
 void Scheduler::addArrivedProcesses() {
