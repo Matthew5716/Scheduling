@@ -6,6 +6,7 @@ Scheduler::Scheduler(int timeQuantum, int IoOffset, vector<Process>& allProcesse
     handleIO = true;
     this->IoOffset = IoOffset;
     processes = allProcesses;
+    processIterator = processes.begin();
     finished = false;
     numQueues = nQueues;
     for(int i = 0; i < nQueues; i++) {
@@ -17,6 +18,7 @@ Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues
     handleIO = false;
     quantum = timeQuantum;
     processes = allProcesses;
+    processIterator = processes.begin();
     finished = false;
     numQueues = nQueues;
     for(int i = 0; i < nQueues; i++) {

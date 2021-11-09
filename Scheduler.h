@@ -14,6 +14,7 @@ private:
     int clock;
     Average average;
     vector<Process> processes;
+    vector<Process>::iterator processIterator;
     Queue queues[5];
     int quantum;
     int numQueues;
@@ -21,6 +22,10 @@ private:
     int IoOffset;
     int processIndex;
     bool finished;
+    queue<Process> arrivedProcesses;
+    queue<Process> IOQueue;
+
+
 
     void addArrivedProcesses();
     void runMFQS();
