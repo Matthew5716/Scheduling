@@ -26,6 +26,7 @@ Process::Process(int pid, int arrival, int burst, int deadline, int priority, in
     this->completionTime = -1;
     this->endClockTick = -1;
     this->queueIndex = 0;
+    this->quantumLeft = -1;
 }
 
 int Process::getTurnaroundTime() {

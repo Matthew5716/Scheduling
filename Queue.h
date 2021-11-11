@@ -3,7 +3,8 @@
 #define SCHED_QUEUE_H
 
 typedef struct Queue {
-    std::queue<Process> queue;
+//    std::queue<Process> queue;
+    std::deque<Process> queue;
     int quantum;
 } Queue;
 

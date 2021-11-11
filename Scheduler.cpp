@@ -3,6 +3,7 @@
 #include <iostream>
 
 using std::cout;
+using std::min;
 
 Scheduler::Scheduler(int timeQuantum, int IoOffset, vector<Process>& allProcesses, int nQueues) {
     quantum = timeQuantum;
@@ -38,14 +39,15 @@ void Scheduler::addArrivedProcesses(int clockTime) {
     if(processIterator->getArrival() == clockTime)
     while(processIterator->getArrival() == clockTime) {
         // add processes to top queue
-        queues[0].queue.push(*processIterator);
+        processIterator->setQuantumLeft(queues[0].quantum);
+        queues[0].queue.push_back(*processIterator);
         //TODO: print process that arrived
         next(processIterator,1);
     }
 }
 
 Process* Scheduler::getTopProcess() {
-    for(int i = 0; i < numQueues) {
+    for(int i = 0; i < numQueues; i++) {
         if(!queues[i].queue.empty()) {
             return (Process *) &queues[i].queue.front();
         }
@@ -73,14 +75,14 @@ void Scheduler::runMFQS() {
             if (runningProcess->getBurstLeft() == 0) { // If process finished
                 average.addProcessToAverages(*runningProcess);
                 cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock << ".\n";
-                runningProcess = NULL:
+                runningProcess = NULL;
             }
             if (runningProcess->getEndClockTick() == clock) { // kicked off cpu but not finished
                 bool hitOffset = runningProcess->getBurstLeft() == runningProcess->getBurst() - IoOffset;
                 bool quantumExpired = runningProcess->getQuantumLeft() == 0;
 
                 if (quantumExpired) {
-                    int queueIndex = runningProcess->getQueueIndex() + 1;
+                    int queueIndex = min(runningProcess->getQueueIndex() + 1, numQueues - 1); // can't go above last queue
                     runningProcess->setQueueIndex(queueIndex);
                     cout << "Process " << runningProcess->getPid() << " has been demoted to queue "
                          << runningProcess->getQueueIndex() << ".\n";
@@ -99,7 +101,7 @@ void Scheduler::runMFQS() {
             continue;
         } else if(topProcess != NULL && runningProcess == NULL) { // Nothing ON CPU just put top process on
             // Pop it off queue
-            queues[topProcess->getQueueIndex()].queue.pop();
+            queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
             int timeQuantum = queues[topProcess->getQueueIndex()].quantum;
             if (handleIO) {
@@ -109,7 +111,14 @@ void Scheduler::runMFQS() {
             }
         }
         else if(topProcess->getQueueIndex() > runningProcess->getQueueIndex()) { // Preempt
-
+            int queueIndex = runningProcess->getQueueIndex();
+            if(queueIndex == numQueues - 1) {
+                queues[runningProcess->getQueueIndex()].queue.push_front(*runningProcess); // last queue FCFS
+            } else {
+                queues[runningProcess->getQueueIndex()].queue.push_back(*runningProcess); // other queues RR
+            }
+            //TODO: Add print statement
+            runningProcess = topProcess;
         }
 
 
