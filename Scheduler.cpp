@@ -35,15 +35,18 @@ Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues
  * Use clcok and process iterator to determine if any processes have arrived,
  * if so add them to the top queue. If no more processes set
  */
-void Scheduler::addArrivedProcesses(int clockTime) {
-    if(processIterator->getArrival() == clockTime)
+bool Scheduler::addArrivedProcesses(int clockTime) {
     while(processIterator->getArrival() == clockTime) {
         // add processes to top queue
         processIterator->setQuantumLeft(queues[0].quantum);
         queues[0].queue.push_back(*processIterator);
         //TODO: print process that arrived
         next(processIterator,1);
+        if(processIterator == processes.end()) {
+            return true;
+        }
     }
+    return false;
 }
 
 Process* Scheduler::getTopProcess() {
@@ -58,13 +61,14 @@ Process* Scheduler::getTopProcess() {
 void Scheduler::runMFQS() {
     clock = 0;
     vector<Process> shiftedProcesses;
+    bool allProcessesHaveArrived;
 
     Process * runningProcess = NULL; // process on CPU
     Process * topProcess; // front of top queue that's not empty
 
     while(!finished) {
         //TODO:Print Clock Tick
-        addArrivedProcesses(clock);
+        allProcessesHaveArrived = addArrivedProcesses(clock);
         // Check for top queue that is not empty, check if queue num is the same as process running
 
         topProcess = getTopProcess();
@@ -98,6 +102,7 @@ void Scheduler::runMFQS() {
 
         if(topProcess == NULL && runningProcess == NULL) { // Nothing to put in CPU
             clock++;
+            // TODO: IF No more arriving procesees and IO QUEUE is empty set finsihed true;
             continue;
         } else if(topProcess != NULL && runningProcess == NULL) { // Nothing ON CPU just put top process on
             // Pop it off queue
@@ -118,14 +123,17 @@ void Scheduler::runMFQS() {
                 queues[runningProcess->getQueueIndex()].queue.push_back(*runningProcess); // other queues RR
             }
             //TODO: Add print statement
+            queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
         }
 
+        //TODO: Handle IO queue
 
+        //TODO: Handle Ageing
 
+        //TODO: ReInsert shifted Processes to queues
 
-
-
+        //TODO: Handle Finished Statement
 
         //If process Arrived And
     }
