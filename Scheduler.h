@@ -27,7 +27,7 @@ private:
 
 
 
-    void addArrivedProcesses();
+    void addArrivedProcesses(int clockTime);
     void runMFQS();
 
 
