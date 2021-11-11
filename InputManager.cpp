@@ -283,6 +283,11 @@ void InputManager::setIO_Offset() {
     cout << "Enter an integer here: ";
     int input;
     cin >> input;
+    while (input == 0) {
+        cout << "I/O offset has to be more than 0." << endl;
+        cout << "Enter an integer here: ";
+        cin >> input;
+    }
     io_Offset = input;
 }
 
