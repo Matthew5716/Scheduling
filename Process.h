@@ -1,6 +1,6 @@
-
 #ifndef SCHED_PROCESS_H
 #define SCHED_PROCESS_H
+#include <algorithm>
 
 class Process {
 private:
@@ -15,6 +15,7 @@ private:
     int ioTimeLeft;
     int queueIndex;
     int endClockTick;
+    int quantumLeft;
 public:
     // Constructor
     Process(); // default constructor
@@ -33,9 +34,11 @@ public:
     int getQueueIndex() { return queueIndex; }
     int getEndClockTick() { return endClockTick; }
     int getPid() { return pid; }
+    int getQuantumLeft() { return quantumLeft; }
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
+    void decrementBurstLeft() { burstLeft--;}
     void setBurstLeft(int burstL) { burstLeft = burstL; }
     void setCompletionTime(int compTime) { completionTime = compTime; }
     void setDeadline(int dead_line) { deadline = dead_line; }
@@ -44,10 +47,13 @@ public:
     void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
     void setQueueIndex(int queue) { queueIndex = queue; }
     //calculates when the process should be kicked off cpu if not preempted.
-    void setEndClockTick(int currentClockTick, int ioOffset);
+    void setEndClockTick(int currentClockTick, int ioOffset, int quantum);
     // if not handling I/O
-    void setEndClockTick(int currentClockTick) { endClockTick = currentClockTick + burstLeft; };
+    void setEndClockTick(int currentClockTick, int quantum) { endClockTick = currentClockTick + std::min(burstLeft, quantum) };
     void setPid(int P_id) { pid = P_id; }
+    void decrementQuantumLeft() { quantumLeft--; }
+    void setQuantumLeft(int quant) { quantumLeft = quant; }
+
 
     // methods
     bool operator < (const Process& process) const {

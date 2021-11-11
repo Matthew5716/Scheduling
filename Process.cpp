@@ -1,4 +1,6 @@
 #include "Process.h"
+#include <algorithm>
+
 // Default Constructor
 Process::Process() {
     arrival = -1;
@@ -23,6 +25,7 @@ Process::Process(int pid, int arrival, int burst, int deadline, int priority, in
     this->ioTimeLeft = ioTime;
     this->completionTime = -1;
     this->endClockTick = -1;
+    this->queueIndex = 0;
 }
 
 int Process::getTurnaroundTime() {
@@ -38,12 +41,15 @@ int Process::getWaitTime() {
     }
     return completionTime - arrival - burst - ioTime;
 }
- void Process::setEndClockTick(int currentClockTick, int ioOffset) {
-    if(ioTimeLeft <= 0 || burstLeft <= ioOffset) {
-        endClockTick = currentClockTick + burstLeft;
-    } else {
-        endClockTick = currentClockTick + ioOffset;
-    }
+
+// TODO: update this to use timeQuantumLeft
+ void Process::setEndClockTick(int currentClockTick, int ioOffset, int quantum) {
+     if(ioTimeLeft <= 0) {
+         endClockTick = currentClockTick + std::min(burstLeft, quantum);
+     } else {
+         int offsetLeft = ioOffset - (burst - burstLeft);
+         endClockTick = currentClockTick + std::min(std::min(burstLeft, quantum), offsetLeft);
+     }
 }
 
 

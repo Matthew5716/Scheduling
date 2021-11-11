@@ -28,6 +28,7 @@ private:
 
 
     void addArrivedProcesses(int clockTime);
+    Process* getTopProcess()
     void runMFQS();
 
 
