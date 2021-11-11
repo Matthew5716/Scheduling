@@ -12,7 +12,8 @@ Process::Process() {
 }
 
 
-Process::Process(int arrival, int burst, int deadline, int priority, int ioTime) {
+Process::Process(int pid, int arrival, int burst, int deadline, int priority, int ioTime) {
+    this->pid = pid;
     this->arrival = arrival;
     this->burst = burst;
     this->burstLeft = burst;

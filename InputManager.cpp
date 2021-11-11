@@ -144,7 +144,7 @@ void InputManager::readFile() {
             // cout << "deadline: " << deadline << endl;
             // cout << "io: " << io << endl;
 
-            Process newProcess = Process(arrival, burst, deadline, priority, io);
+            Process newProcess = Process(pid, arrival, burst, deadline, priority, io);
 
             if (isSanitized(newProcess)) {
                 //cout << "pid: " << pid << " is sanitized " <<endl;
@@ -170,7 +170,7 @@ void InputManager::readFromUser() {
     
 //    std::vector <Process> processes;
     bool exitFlag = false;
-    pid = 0;
+    pid = 1;
     int processCount = 0;
 
     while(!exitFlag) {
@@ -186,7 +186,7 @@ void InputManager::readFromUser() {
         cout << "Input Process " << pid << " I/O: ";
         cin >> io;
         
-        Process newProcess = Process(arrival, burst, deadline, priority, io);
+        Process newProcess = Process(pid, arrival, burst, deadline, priority, io);
 
         if (isSanitized(newProcess)) {
             cout << "pid: " << pid << " is sanitized " << endl;      

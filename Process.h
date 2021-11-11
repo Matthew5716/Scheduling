@@ -18,7 +18,7 @@ private:
 public:
     // Constructor
     Process(); // default constructor
-    Process(int arrival, int burst, int deadline, int priority, int ioTime);
+    Process(int pid, int arrival, int burst, int deadline, int priority, int ioTime);
     // Getters
     int getTurnaroundTime();
     int getWaitTime();
