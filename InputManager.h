@@ -13,6 +13,7 @@ private:
     int timeQuantum;
     bool handleIO;
     int io_Offset;
+    int ageing;
     int pid, burst, arrival, priority, deadline, io;
     std::vector<Process> processes;
 
@@ -30,19 +31,22 @@ public:
     void readFromUser();
 
     void setRealTimeType();
-    int getRealTimeType();
+    int getRealTimeType() { return realTimeType; };
 
     void setNumQueues();
-    int getNumQueues();
+    int getNumQueues() { return numQueues; };
 
     void setTimeQuantum();
-    int getTimeQuantum();
+    int getTimeQuantum() { return timeQuantum; };
 
     void setHandleIO();
     bool getHandleIO() { return handleIO; }
 
     void setIO_Offset();
     int getIO_Offset() { return io_Offset; }
+
+    void setAgeing();
+    int getAgeing() { return ageing; }
 
     bool goodInput(int input);
     bool isSanitized(Process process);

@@ -224,10 +224,6 @@ void InputManager::setRealTimeType() {
     realTimeType = input;
 }
 
-int InputManager::getRealTimeType() {
-    return realTimeType;
-}
-
 void InputManager::setNumQueues() {
     cout << "How many queues would you like MFQS to use (2-5)?" << endl;
     cout << "Input your choice here: ";
@@ -245,10 +241,6 @@ void InputManager::setNumQueues() {
     numQueues = input;
 }
 
-int InputManager::getNumQueues() {
-    return numQueues;
-}
-
 void InputManager::setTimeQuantum() {
     cout << "What time quantum do you want MFQS to use?" << endl;
     cout << "Input your choice here: ";
@@ -257,8 +249,12 @@ void InputManager::setTimeQuantum() {
     timeQuantum = input;
 }
 
-int InputManager::getTimeQuantum() {
-    return timeQuantum;
+void InputManager::setAgeing() {
+    cout << "What value would you like to use for ageing (when a process should be promoted if it is in the FCFS queue)?" << endl;
+    cout << "Input your choice here: ";
+    int input;
+    cin >> input;
+    ageing = input;
 }
 
 void InputManager::setHandleIO() {
@@ -318,38 +314,28 @@ bool InputManager::isSanitized(Process process) {
 void InputManager::getInput() {
     welcomeMessage();
     setAlgorithmType();
-    cout << getAlgorithmType() << endl;
 
-    if(getAlgorithmType() == 1) {   //real time algorithm
+    if(getAlgorithmType() == 1) { // real time algorithm
         setRealTimeType();
-    } else {
+    } else { // MFQS algorithm
         setNumQueues();
         setTimeQuantum();
+        setAgeing();
     }
-
     setHandleIO();
-
     if(getHandleIO() == true) {
         setIO_Offset();
     }
-
     setReadType();
-    cout << getReadType() << endl;
-
-
     if(getReadType() == 0) {
         readFile();
-
         if(processes.size() == 0) {
             cout << "Unable to read file; file does not exist or error reading file." << endl;
         } else {
              cout << "Number of valid processes: " <<processes.size() << endl;
         }
 
-       
-
         sort(processes.begin(), processes.end());
-
 
         // for (int i = 0; i < processes.size(); i++) {
         //     cout << "Process " << i << "'s arrival time: " << processes.at(i).getArrival() << endl;
