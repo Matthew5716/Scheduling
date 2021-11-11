@@ -5,6 +5,7 @@
 class Process {
 private:
     int arrival;
+    int pid;
     int burst;
     int burstLeft;
     int completionTime;
@@ -31,6 +32,7 @@ public:
     int getIoTimeLeft() { return ioTimeLeft; }
     int getQueueIndex() { return queueIndex; }
     int getEndClockTick() { return endClockTick; }
+    int getPid() { return pid; }
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
@@ -45,6 +47,7 @@ public:
     void setEndClockTick(int currentClockTick, int ioOffset);
     // if not handling I/O
     void setEndClockTick(int currentClockTick) { endClockTick = currentClockTick + burstLeft; };
+    void setPid(int P_id) { pid = P_id; }
 
     // methods
     bool operator < (const Process& process) const {
