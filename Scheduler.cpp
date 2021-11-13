@@ -185,14 +185,6 @@ void Scheduler::runMFQS() {
 
         clock++;
 
-//        //Handle Ageing
-//        updateAgeing(shiftedProcesses);
-//
-//        // IO queue
-//        if (handleIO) {
-//            updateIO(IOQueue, shiftedProcesses);
-//        }
-//        insertShiftedProcesses(shiftedProcesses);
     }
     cout << "Average wait time was: " << average.getAverageWaitTime() << "\n"
        << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
