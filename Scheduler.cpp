@@ -114,7 +114,7 @@ void Scheduler::runMFQS() {
         if (runningProcess != nullptr) { // if there is a running process
             runningProcess->decrementBurstLeft();
             runningProcess->decrementQuantumLeft();
-            if (runningProcess->getBurstLeft() == 0 && runningProcess->getIoTimeLeft() == 0) { // If process finished
+            if (runningProcess->getBurstLeft() <= 0 && runningProcess->getIoTimeLeft() <= 0) { // If process finished
                 runningProcess->setCompletionTime(clock);
                 average.addProcessToAverages(*runningProcess);
                 cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock << ".\n";
@@ -170,6 +170,11 @@ void Scheduler::runMFQS() {
                  << " is now on cpu. \n";
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
+            if (handleIO) {
+                runningProcess->setEndClockTick(clock, IoOffset);
+            } else {
+                runningProcess->setEndClockTick(clock);
+            }
         }
         if(runningProcess != nullptr) {
             cout << *runningProcess << " is on CPU.\n";
