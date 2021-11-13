@@ -46,7 +46,7 @@ Process* Scheduler::getTopProcess() {
             return (Process *) &queues[i].queue.front();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void Scheduler::updateAgeing(vector<Process>& shiftedProcesses) {
@@ -67,22 +67,34 @@ void Scheduler::updateAgeing(vector<Process>& shiftedProcesses) {
     }
 }
 
-void updateIO(queue<Process>& IOQueue, vector<Process>& shiftedProcesses) {
-    Process &ioProcess = IOQueue.front();
-    if (ioProcess.decrementIoTimeLeft()) {
-        ioProcess.setQueueIndex(ioProcess.getQueueIndex() + 1);
-        shiftedProcesses.push_back(ioProcess);
-        IOQueue.pop();
-        cout << "Process " << ioProcess.getPid() << " finished I/O \n";
+void updateIO(queue<Process>& IOQueue, vector<Process>& shiftedProcesses, Average& average, int clock) {
+    if(IOQueue.size() > 0) {
+        Process &ioProcess = IOQueue.front();
+        if (ioProcess.decrementIoTimeLeft()) {
+            if(ioProcess.getBurstLeft() == 0) {
+                cout << "Process " << ioProcess.getPid() << " finished I/O and has finished running. \n";
+                ioProcess.setCompletionTime(clock);
+                average.addProcessToAverages(ioProcess);
+            } else {
+                ioProcess.setQueueIndex(ioProcess.getQueueIndex() + 1);
+                shiftedProcesses.push_back(ioProcess);
+                cout << "Process " << ioProcess.getPid() << " finished I/O \n";
+            }
+            IOQueue.pop();
+        }
     }
 }
 
 void Scheduler::runMFQS() {
+    if(processes.size() == 0) {
+        cout << "No processes.";
+        return;
+    }
     clock = 0;
     vector<Process> shiftedProcesses;
     bool allProcessesHaveArrived;
 
-    Process * runningProcess = NULL; // process on CPU
+    Process * runningProcess = nullptr; // process on CPU
     Process * topProcess; // front of top queue that's not empty
 
     while(!finished) {
@@ -91,18 +103,24 @@ void Scheduler::runMFQS() {
             allProcessesHaveArrived = addArrivedProcesses(clock);
         }
 
-        // Check for top queue that is not empty, check if queue num is the same as process running
-        topProcess = getTopProcess();
+        // update state of IO queue to reflect passed clock tick
+        if (handleIO) {
+            updateIO(IOQueue, shiftedProcesses, average, clock);
+        }
+        // update state of ageing and queues to reflect passed clock tick
+        updateAgeing(shiftedProcesses);
 
-        if (runningProcess != NULL) { // if there is a running process
+        // update state of running process to reflect passed clock tick
+        if (runningProcess != nullptr) { // if there is a running process
             runningProcess->decrementBurstLeft();
             runningProcess->decrementQuantumLeft();
-            if (runningProcess->getBurstLeft() == 0) { // If process finished
+            if (runningProcess->getBurstLeft() == 0 && runningProcess->getIoTimeLeft() == 0) { // If process finished
+                runningProcess->setCompletionTime(clock);
                 average.addProcessToAverages(*runningProcess);
                 cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock << ".\n";
-                runningProcess = NULL;
+                runningProcess = nullptr;
             }
-            if (runningProcess->getEndClockTick() == clock) { // kicked off cpu but not finished
+            if (runningProcess != nullptr && runningProcess->getEndClockTick() == clock) { // kicked off cpu but not finished
                 bool hitOffset = runningProcess->getBurstLeft() == runningProcess->getBurst() - IoOffset;
                 bool quantumExpired = runningProcess->getQuantumLeft() == 0;
 
@@ -117,17 +135,21 @@ void Scheduler::runMFQS() {
                 } else {
                     shiftedProcesses.push_back(*runningProcess);
                 }
-                runningProcess = NULL;
+                runningProcess = nullptr;
             }
         }
 
-        if(topProcess == NULL && runningProcess == NULL) { // Nothing to put in CPU
-            clock++;
+        // reinsert all process where they should be before updating cpu
+        insertShiftedProcesses(shiftedProcesses);
+
+        // Check for top queue that is not empty, check if queue num is the same as process running
+        topProcess = getTopProcess();
+
+        if(topProcess == nullptr && runningProcess == nullptr) { // Nothing to put in CPU
             if(allProcessesHaveArrived && IOQueue.empty() && shiftedProcesses.empty()) {
                 finished = true;
             }
-            continue;
-        } else if(topProcess != NULL && runningProcess == NULL) { // Nothing ON CPU just put top process on
+        } else if(topProcess != nullptr && runningProcess == nullptr) { // Nothing ON CPU just put top process on
             // Pop it off queue
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
@@ -136,31 +158,36 @@ void Scheduler::runMFQS() {
             } else {
                 runningProcess->setEndClockTick(clock);
             }
-        }
-        else if(topProcess->getQueueIndex() > runningProcess->getQueueIndex()) { // Preempt
+        } else if (topProcess != nullptr && runningProcess != nullptr &&
+                   topProcess->getQueueIndex() > runningProcess->getQueueIndex()) { // Preempt
             int queueIndex = runningProcess->getQueueIndex();
-            if(queueIndex == numQueues - 1) {
+            if (queueIndex == numQueues - 1) {
                 queues[runningProcess->getQueueIndex()].queue.push_front(*runningProcess); // last queue FCFS
             } else {
                 queues[runningProcess->getQueueIndex()].queue.push_back(*runningProcess); // other queues RR
             }
-            cout << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess << " is now on cpu. \n";
+            cout << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
+                 << " is now on cpu. \n";
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
         }
-
-
-        //Handle Ageing
-        updateAgeing(shiftedProcesses);
-
-        // IO queue
-        if (handleIO) {
-            updateIO(IOQueue, shiftedProcesses);
+        if(runningProcess != nullptr) {
+            cout << *runningProcess << " is on CPU.\n";
         }
 
-        insertShiftedProcesses(shiftedProcesses);
         clock++;
+
+//        //Handle Ageing
+//        updateAgeing(shiftedProcesses);
+//
+//        // IO queue
+//        if (handleIO) {
+//            updateIO(IOQueue, shiftedProcesses);
+//        }
+//        insertShiftedProcesses(shiftedProcesses);
     }
+    cout << "Average wait time was: " << average.getAverageWaitTime() << "\n"
+       << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
 }
 
 void Scheduler::insertShiftedProcesses(vector<Process>& shiftedProcesses) {
