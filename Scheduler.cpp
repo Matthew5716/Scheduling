@@ -114,7 +114,7 @@ void Scheduler::runMFQS() {
         if (runningProcess != nullptr) { // if there is a running process
             runningProcess->decrementBurstLeft();
             runningProcess->decrementQuantumLeft();
-            if (runningProcess->getBurstLeft() <= 0 && runningProcess->getIoTimeLeft() <= 0) { // If process finished
+            if (runningProcess->getBurstLeft() <= 0 && (!handleIO || (handleIO &&runningProcess->getIoTimeLeft() <= 0))) { // If process finished
                 runningProcess->setCompletionTime(clock);
                 average.addProcessToAverages(*runningProcess);
                 cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock << ".\n";
@@ -151,7 +151,11 @@ void Scheduler::runMFQS() {
             }
         } else if(topProcess != nullptr && runningProcess == nullptr) { // Nothing ON CPU just put top process on
             // Pop it off queue
-            queues[topProcess->getQueueIndex()].queue.pop_front();
+            try {
+                queues[topProcess->getQueueIndex()].queue.pop_front();
+            } catch (int e) {
+                cout << "An exception occured popping of queue. " << e << "\n";
+            }
             runningProcess = topProcess;
             topProcess = nullptr;
         } else if (topProcess != nullptr && runningProcess != nullptr &&
@@ -181,29 +185,23 @@ void Scheduler::runMFQS() {
 
         clock++;
 
-//        //Handle Ageing
-//        updateAgeing(shiftedProcesses);
-//
-//        // IO queue
-//        if (handleIO) {
-//            updateIO(IOQueue, shiftedProcesses);
-//        }
-//        insertShiftedProcesses(shiftedProcesses);
     }
     cout << "Average wait time was: " << average.getAverageWaitTime() << "\n"
        << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
 }
 
 void Scheduler::insertShiftedProcesses(vector<Process>& shiftedProcesses) {
-    sort(shiftedProcesses.begin(), shiftedProcesses.end());
-    auto iter = shiftedProcesses.begin();
-    int index;
-    while (iter != shiftedProcesses.end()) {
-        index = iter->getQueueIndex();
-        iter->setQuantumLeft(queues[index].quantum);
-        queues[index].queue.push_back(*iter);
-        cout << "Process " << iter->getPid() << " has been shifted to queue " << iter->getQueueIndex() << ".\n";
-        ++iter;
+    if(!shiftedProcesses.empty()) {
+        sort(shiftedProcesses.begin(), shiftedProcesses.end());
+        auto iter = shiftedProcesses.begin();
+        int index;
+        while (iter != shiftedProcesses.end()) {
+            index = iter->getQueueIndex();
+            iter->setQuantumLeft(queues[index].quantum);
+            queues[index].queue.push_back(*iter);
+            cout << "Process " << iter->getPid() << " has been shifted to queue " << iter->getQueueIndex() << ".\n";
+            ++iter;
+        }
+        shiftedProcesses.clear();
     }
-    shiftedProcesses.clear();
 }
