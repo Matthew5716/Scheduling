@@ -157,7 +157,7 @@ void Scheduler::runMFQS() {
         }
 
         insertShiftedProcesses(shiftedProcesses);
-
+        clock++;
     }
 }
 
