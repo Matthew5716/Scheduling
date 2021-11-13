@@ -3,7 +3,9 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cstring>
 #include <string>
+
 #include "InputManager.h"
 #include "Process.h" //temporary include for process
 using namespace std;
