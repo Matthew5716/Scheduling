@@ -51,16 +51,18 @@ Process* Scheduler::getTopProcess() {
 
 void Scheduler::updateAgeing(vector<Process>& shiftedProcesses) {
     size_t size = queues[numQueues - 1].queue.size();
-    Process& temp =  queues[numQueues -1].queue.front();
-    for(size_t i = 0; i < size; i++) {
-        temp = queues[numQueues -1].queue.front();
-        queues[numQueues -1].queue.pop_front();
-        temp.incrementAge();
-        if(temp.getAgeTime() == ageLimit) {
-            temp.setQueueIndex(temp.getQueueIndex() - 1);
-            shiftedProcesses.push_back(temp);
-        } else {
-            queues[numQueues -1].queue.push_back(temp);
+    if(size > 0) {
+        Process& temp = queues[numQueues -1].queue.front();
+        for (size_t i = 0; i < size; i++) {
+            temp = queues[numQueues - 1].queue.front();
+            queues[numQueues - 1].queue.pop_front();
+            temp.incrementAge();
+            if (temp.getAgeTime() == ageLimit) {
+                temp.setQueueIndex(temp.getQueueIndex() - 1);
+                shiftedProcesses.push_back(temp);
+            } else {
+                queues[numQueues - 1].queue.push_back(temp);
+            }
         }
     }
 }
