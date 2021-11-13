@@ -76,7 +76,7 @@ void updateIO(queue<Process>& IOQueue, vector<Process>& shiftedProcesses, Averag
                 ioProcess.setCompletionTime(clock);
                 average.addProcessToAverages(ioProcess);
             } else {
-                ioProcess.setQueueIndex(ioProcess.getQueueIndex() + 1);
+                ioProcess.setQueueIndex(std::max(ioProcess.getQueueIndex() - 1, 0));
                 shiftedProcesses.push_back(ioProcess);
                 cout << "Process " << ioProcess.getPid() << " finished I/O \n";
             }
