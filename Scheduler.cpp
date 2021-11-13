@@ -40,7 +40,7 @@ bool Scheduler::addArrivedProcesses(int clockTime) {
         // add processes to top queue
         processIterator->setQuantumLeft(queues[0].quantum);
         queues[0].queue.push_back(*processIterator);
-        //TODO: print process that arrived
+        cout << "Process " << processIterator->getPid() << " has arrived. \n";
         next(processIterator,1);
         if(processIterator == processes.end()) {
             return true;
@@ -67,10 +67,12 @@ void Scheduler::runMFQS() {
     Process * topProcess; // front of top queue that's not empty
 
     while(!finished) {
-        //TODO:Print Clock Tick
-        allProcessesHaveArrived = addArrivedProcesses(clock);
-        // Check for top queue that is not empty, check if queue num is the same as process running
+        cout << "ClockTick: " << clock << " \n";
+        if(!allProcessesHaveArrived) {
+            allProcessesHaveArrived = addArrivedProcesses(clock);
+        }
 
+        // Check for top queue that is not empty, check if queue num is the same as process running
         topProcess = getTopProcess();
 
         if (runningProcess != NULL) { // if there is a running process
@@ -102,6 +104,7 @@ void Scheduler::runMFQS() {
 
         if(topProcess == NULL && runningProcess == NULL) { // Nothing to put in CPU
             clock++;
+
             // TODO: IF No more arriving procesees and IO QUEUE is empty set finsihed true;
             continue;
         } else if(topProcess != NULL && runningProcess == NULL) { // Nothing ON CPU just put top process on
@@ -110,9 +113,9 @@ void Scheduler::runMFQS() {
             runningProcess = topProcess;
             int timeQuantum = queues[topProcess->getQueueIndex()].quantum;
             if (handleIO) {
-                runningProcess->setEndClockTick(clock, IoOffset, timeQuantum);
+                runningProcess->setEndClockTick(clock, IoOffset);
             } else {
-                runningProcess->setEndClockTick(clock, timeQuantum);
+                runningProcess->setEndClockTick(clock);
             }
         }
         else if(topProcess->getQueueIndex() > runningProcess->getQueueIndex()) { // Preempt
@@ -122,7 +125,7 @@ void Scheduler::runMFQS() {
             } else {
                 queues[runningProcess->getQueueIndex()].queue.push_back(*runningProcess); // other queues RR
             }
-            //TODO: Add print statement
+            cout << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess << " is now on cpu. \n";
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
         }
@@ -131,11 +134,10 @@ void Scheduler::runMFQS() {
 
         //TODO: Handle Ageing
 
-        //TODO: ReInsert shifted Processes to queues
+        //TODO: ReInsert shifted Processes to queues, make sure to set time quantums
 
         //TODO: Handle Finished Statement
 
-        //If process Arrived And
     }
 
 

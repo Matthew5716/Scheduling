@@ -43,13 +43,12 @@ int Process::getWaitTime() {
     return completionTime - arrival - burst - ioTime;
 }
 
-// TODO: update this to use timeQuantumLeft
- void Process::setEndClockTick(int currentClockTick, int ioOffset, int quantum) {
+ void Process::setEndClockTick(int currentClockTick, int ioOffset) {
      if(ioTimeLeft <= 0) {
-         endClockTick = currentClockTick + std::min(burstLeft, quantum);
+         endClockTick = currentClockTick + std::min(burstLeft, quantumLeft);
      } else {
          int offsetLeft = ioOffset - (burst - burstLeft);
-         endClockTick = currentClockTick + std::min(std::min(burstLeft, quantum), offsetLeft);
+         endClockTick = currentClockTick + std::min(std::min(burstLeft, quantumLeft), offsetLeft);
      }
 }
 

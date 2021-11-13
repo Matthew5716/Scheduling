@@ -1,6 +1,9 @@
 #ifndef SCHED_PROCESS_H
 #define SCHED_PROCESS_H
 #include <algorithm>
+#include <iostream>
+using std::ostream;
+
 
 class Process {
 private:
@@ -47,9 +50,9 @@ public:
     void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
     void setQueueIndex(int queue) { queueIndex = queue; }
     //calculates when the process should be kicked off cpu if not preempted.
-    void setEndClockTick(int currentClockTick, int ioOffset, int quantum);
+    void setEndClockTick(int currentClockTick, int ioOffset);
     // if not handling I/O
-    void setEndClockTick(int currentClockTick, int quantum) { endClockTick = currentClockTick + std::min(burstLeft, quantum) };
+    void setEndClockTick(int currentClockTick) { endClockTick = currentClockTick + std::min(burstLeft, quantumLeft); }
     void setPid(int P_id) { pid = P_id; }
     void decrementQuantumLeft() { quantumLeft--; }
     void setQuantumLeft(int quant) { quantumLeft = quant; }
@@ -62,6 +65,12 @@ public:
         } else { // If arrival is the same put higher priority process first.
             return priority > process.priority;
         }
+    }
+
+
+    friend ostream& operator<<(ostream &os, const Process& process) {
+        os << "Process with Pid: " << process.pid << " and queue level: " << process.queueIndex;
+        return os;
     }
 
 };
