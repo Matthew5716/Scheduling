@@ -153,6 +153,7 @@ void Scheduler::runMFQS() {
             // Pop it off queue
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
+            topProcess = nullptr;
         } else if (topProcess != nullptr && runningProcess != nullptr &&
                    topProcess->getQueueIndex() > runningProcess->getQueueIndex()) { // Preempt
             int queueIndex = runningProcess->getQueueIndex();
