@@ -32,7 +32,7 @@ bool Scheduler::addArrivedProcesses(int clockTime) {
         processIterator->setQuantumLeft(queues[0].quantum);
         queues[0].queue.push_back(*processIterator);
         cout << "Process " << processIterator->getPid() << " has arrived. \n";
-        next(processIterator,1);
+        ++processIterator;
         if(processIterator == processes.end()) {
             return true;
         }
@@ -170,6 +170,7 @@ void Scheduler::insertShiftedProcesses(vector<Process>& shiftedProcesses) {
         iter->setQuantumLeft(queues[index].quantum);
         queues[index].queue.push_back(*iter);
         cout << "Process " << iter->getPid() << " has been shifted to queue " << iter->getQueueIndex() << ".\n";
-        shiftedProcesses.clear();
+        ++iter;
     }
+    shiftedProcesses.clear();
 }
