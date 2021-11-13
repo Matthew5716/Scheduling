@@ -153,11 +153,6 @@ void Scheduler::runMFQS() {
             // Pop it off queue
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
-            if (handleIO) {
-                runningProcess->setEndClockTick(clock, IoOffset);
-            } else {
-                runningProcess->setEndClockTick(clock);
-            }
         } else if (topProcess != nullptr && runningProcess != nullptr &&
                    topProcess->getQueueIndex() > runningProcess->getQueueIndex()) { // Preempt
             int queueIndex = runningProcess->getQueueIndex();
@@ -170,13 +165,16 @@ void Scheduler::runMFQS() {
                  << " is now on cpu. \n";
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
-            if (handleIO) {
-                runningProcess->setEndClockTick(clock, IoOffset);
-            } else {
-                runningProcess->setEndClockTick(clock);
-            }
         }
+
         if(runningProcess != nullptr) {
+            if(runningProcess->getEndClockTick() <= 0) {
+                if (handleIO) {
+                    runningProcess->setEndClockTick(clock, IoOffset);
+                } else {
+                    runningProcess->setEndClockTick(clock);
+                }
+            }
             cout << *runningProcess << " is on CPU.\n";
         }
 
