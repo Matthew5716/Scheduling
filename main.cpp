@@ -9,7 +9,7 @@ using namespace std;
 int main() {
     InputManager input;
     input.getInput();
-    Scheduler scheduler =  Scheduler(input.getTimeQuantum(), input.getProcesses(), input.getNumQueues());
+    Scheduler scheduler =  Scheduler(input.getTimeQuantum(), input.getProcesses(), input.getNumQueues(), input.getAgeing());
     if(input.getHandleIO()) {
         scheduler.setHandleIO(input.getHandleIO());
         scheduler.setIoOffset(input.getIO_Offset());

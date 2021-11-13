@@ -19,6 +19,7 @@ private:
     int queueIndex;
     int endClockTick;
     int quantumLeft;
+    int ageTime;
 public:
     // Constructor
     Process(); // default constructor
@@ -38,6 +39,7 @@ public:
     int getEndClockTick() { return endClockTick; }
     int getPid() { return pid; }
     int getQuantumLeft() { return quantumLeft; }
+    int getAgeTime() { return ageTime; }
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
@@ -48,6 +50,7 @@ public:
     void setPriority(int prior) { priority = prior; }
     void setIoTime(int io_time) { ioTime = io_time; }
     void setIoTimeLeft(int io_time_left) { ioTimeLeft = io_time_left; }
+    bool decrementIoTimeLeft() { ioTimeLeft--; return ioTimeLeft == 0;}
     void setQueueIndex(int queue) { queueIndex = queue; }
     //calculates when the process should be kicked off cpu if not preempted.
     void setEndClockTick(int currentClockTick, int ioOffset);
@@ -56,6 +59,8 @@ public:
     void setPid(int P_id) { pid = P_id; }
     void decrementQuantumLeft() { quantumLeft--; }
     void setQuantumLeft(int quant) { quantumLeft = quant; }
+    void setAgeTime() { ageTime = 0; }
+    void incrementAge() { ageTime++; }
 
 
     // methods

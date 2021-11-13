@@ -24,19 +24,19 @@ private:
     bool finished;
     queue<Process> arrivedProcesses;
     queue<Process> IOQueue;
+    int ageLimit;
 
-
-
+    void insertShiftedProcesses(vector<Process>& shiftedProcesses);
     bool addArrivedProcesses(int clockTime);
     Process* getTopProcess();
     void runMFQS();
+    void updateAgeing(vector<Process>& shiftedProcesses);
 
 
 
 public:
     Scheduler();
-    Scheduler(int timeQuantum, int IoOffset, vector<Process>& allProcesses, int nQueues);
-    Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues);
+    Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing);
 
     void setHandleIO(bool handleIo) { handleIO = handleIo; }
     void setProccees(vector<Process>& allProcesses) { processes = allProcesses ;}

@@ -1,30 +1,21 @@
 #include "Scheduler.h"
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 using std::cout;
 using std::min;
+using std::sort;
 
-Scheduler::Scheduler(int timeQuantum, int IoOffset, vector<Process>& allProcesses, int nQueues) {
-    quantum = timeQuantum;
-    handleIO = true;
-    this->IoOffset = IoOffset;
-    processes = allProcesses;
-    processIterator = processes.begin();
-    finished = false;
-    numQueues = nQueues;
-    for(int i = 0; i < nQueues; i++) {
-        queues[i].quantum = timeQuantum * pow(2,i);
-    }
-}
-
-Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues) {
+Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing) {
     handleIO = false;
+    IoOffset = -1;
     quantum = timeQuantum;
     processes = allProcesses;
     processIterator = processes.begin();
     finished = false;
     numQueues = nQueues;
+    ageLimit = ageing;
     for(int i = 0; i < nQueues; i++) {
         queues[i].quantum = timeQuantum * pow(2,i);
     }
@@ -56,6 +47,32 @@ Process* Scheduler::getTopProcess() {
         }
     }
     return NULL;
+}
+
+void Scheduler::updateAgeing(vector<Process>& shiftedProcesses) {
+    size_t size = queues[numQueues - 1].queue.size();
+    Process& temp =  queues[numQueues -1].queue.front();
+    for(int i = 0; i < size; i++) {
+        temp = queues[numQueues -1].queue.front();
+        queues[numQueues -1].queue.pop_front();
+        temp.incrementAge();
+        if(temp.getAgeTime() == ageLimit) {
+            temp.setQueueIndex(temp.getQueueIndex() - 1);
+            shiftedProcesses.push_back(temp);
+        } else {
+            queues[numQueues -1].queue.push_back(temp);
+        }
+    }
+}
+
+void updateIO(queue<Process>& IOQueue, vector<Process>& shiftedProcesses) {
+    Process &ioProcess = IOQueue.front();
+    if (ioProcess.decrementIoTimeLeft()) {
+        ioProcess.setQueueIndex(ioProcess.getQueueIndex() + 1);
+        shiftedProcesses.push_back(ioProcess);
+        IOQueue.pop();
+        cout << "Process " << ioProcess.getPid() << " finished I/O \n";
+    }
 }
 
 void Scheduler::runMFQS() {
@@ -104,8 +121,9 @@ void Scheduler::runMFQS() {
 
         if(topProcess == NULL && runningProcess == NULL) { // Nothing to put in CPU
             clock++;
-
-            // TODO: IF No more arriving procesees and IO QUEUE is empty set finsihed true;
+            if(allProcessesHaveArrived && IOQueue.empty() && shiftedProcesses.empty()) {
+                finished = true;
+            }
             continue;
         } else if(topProcess != NULL && runningProcess == NULL) { // Nothing ON CPU just put top process on
             // Pop it off queue
@@ -130,16 +148,30 @@ void Scheduler::runMFQS() {
             runningProcess = topProcess;
         }
 
-        //TODO: Handle IO queue
 
-        //TODO: Handle Ageing
+        //Handle Ageing
+        updateAgeing(shiftedProcesses);
 
-        //TODO: ReInsert shifted Processes to queues, make sure to set time quantums
+        // IO queue
+        if (handleIO) {
+            updateIO(IOQueue, shiftedProcesses);
+        }
 
-        //TODO: Handle Finished Statement
+        insertShiftedProcesses(shiftedProcesses);
 
     }
+}
 
-
-
+void Scheduler::insertShiftedProcesses(vector<Process>& shiftedProcesses) {
+    sort(shiftedProcesses.begin(), shiftedProcesses.end());
+    auto iter = shiftedProcesses.begin();
+    int index;
+    int quantum;
+    while (iter != shiftedProcesses.end()) {
+        index = iter->getQueueIndex();
+        iter->setQuantumLeft(queues[index].quantum);
+        queues[index].queue.push_back(*iter);
+        cout << "Process " << iter->getPid() << " has been shifted to queue " << iter->getQueueIndex() << ".\n";
+        shiftedProcesses.clear();
+    }
 }
