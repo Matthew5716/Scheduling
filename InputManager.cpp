@@ -52,7 +52,6 @@ void InputManager::setReadType() {
 
 void InputManager::readFile() {
     ifstream inputFile; 
-    int lineCount = 0;
     int processCount = 0;
     string fileLine;
     string pidString;

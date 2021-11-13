@@ -52,7 +52,7 @@ Process* Scheduler::getTopProcess() {
 void Scheduler::updateAgeing(vector<Process>& shiftedProcesses) {
     size_t size = queues[numQueues - 1].queue.size();
     Process& temp =  queues[numQueues -1].queue.front();
-    for(int i = 0; i < size; i++) {
+    for(size_t i = 0; i < size; i++) {
         temp = queues[numQueues -1].queue.front();
         queues[numQueues -1].queue.pop_front();
         temp.incrementAge();
@@ -129,7 +129,6 @@ void Scheduler::runMFQS() {
             // Pop it off queue
             queues[topProcess->getQueueIndex()].queue.pop_front();
             runningProcess = topProcess;
-            int timeQuantum = queues[topProcess->getQueueIndex()].quantum;
             if (handleIO) {
                 runningProcess->setEndClockTick(clock, IoOffset);
             } else {
@@ -166,7 +165,6 @@ void Scheduler::insertShiftedProcesses(vector<Process>& shiftedProcesses) {
     sort(shiftedProcesses.begin(), shiftedProcesses.end());
     auto iter = shiftedProcesses.begin();
     int index;
-    int quantum;
     while (iter != shiftedProcesses.end()) {
         index = iter->getQueueIndex();
         iter->setQuantumLeft(queues[index].quantum);

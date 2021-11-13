@@ -29,7 +29,6 @@ private:
     void insertShiftedProcesses(vector<Process>& shiftedProcesses);
     bool addArrivedProcesses(int clockTime);
     Process* getTopProcess();
-    void runMFQS();
     void updateAgeing(vector<Process>& shiftedProcesses);
 
 
@@ -37,6 +36,7 @@ private:
 public:
     Scheduler();
     Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing);
+    void runMFQS();
 
     void setHandleIO(bool handleIo) { handleIO = handleIo; }
     void setProccees(vector<Process>& allProcesses) { processes = allProcesses ;}
