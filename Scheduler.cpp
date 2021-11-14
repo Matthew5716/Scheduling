@@ -30,6 +30,9 @@ bool Scheduler::addArrivedProcesses(int clockTime) {
     while(processIterator->getArrival() == clockTime) {
         // add processes to top queue
         processIterator->setQuantumLeft(queues[0].quantum);
+        if (handleIO && processIterator->getIoTime() > 0) {
+            processIterator->setIOOffsetLeft(IoOffset);
+        }
         queues[0].queue.push_back(*processIterator);
         cout << "Process " << processIterator->getPid() << " has arrived. \n";
         ++processIterator;
@@ -95,8 +98,11 @@ void Scheduler::runMFQS() {
     bool allProcessesHaveArrived;
 
     Process * runningProcess = nullptr; // process on CPU
-    Process * topProcess; // front of top queue that's not empty
-
+    Process * topProcess = nullptr; // front of top queue that's not empty
+    bool finishedBurst = false;
+    bool finishedQuantum = false;
+    bool hitIoOffset = false;
+    bool newProcessOnCpu = false;
     while(!finished) {
         cout << "ClockTick: " << clock << " \n";
         if(!allProcessesHaveArrived) {
@@ -112,29 +118,36 @@ void Scheduler::runMFQS() {
 
         // update state of running process to reflect passed clock tick
         if (runningProcess != nullptr) { // if there is a running process
-            runningProcess->decrementBurstLeft();
-            runningProcess->decrementQuantumLeft();
-            if (runningProcess->getBurstLeft() <= 0 && (!handleIO || (handleIO &&runningProcess->getIoTimeLeft() <= 0))) { // If process finished
-                runningProcess->setCompletionTime(clock);
-                average.addProcessToAverages(*runningProcess);
-                cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock << ".\n";
-                runningProcess = nullptr;
+            finishedBurst = runningProcess->decrementBurstLeft();
+            finishedQuantum = runningProcess->decrementQuantumLeft();
+            if (handleIO && runningProcess->getIOOffsetLeft() > 0) {
+                hitIoOffset = runningProcess->decrementIOOffsetLeft();
             }
-            if (runningProcess != nullptr && runningProcess->getEndClockTick() == clock) { // kicked off cpu but not finished
-                bool hitOffset = runningProcess->getBurstLeft() == runningProcess->getBurst() - IoOffset;
-                bool quantumExpired = runningProcess->getQuantumLeft() == 0;
-
-                if (quantumExpired) {
-                    int queueIndex = min(runningProcess->getQueueIndex() + 1, numQueues - 1); // can't go above last queue
-                    runningProcess->setQueueIndex(queueIndex);
-                    cout << "Process " << runningProcess->getPid() << " has been demoted to queue "
-                         << runningProcess->getQueueIndex() << ".\n";
+            if (finishedBurst) { // If process finished
+                if (handleIO && runningProcess->getIoTimeLeft() > 0) { // finished bursting but needs to do I/O
+                    IOQueue.push(*runningProcess);
+                } else {
+                    runningProcess->setCompletionTime(clock);
+                    average.addProcessToAverages(*runningProcess);
+                    cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock
+                         << ".\n";
                 }
-                if (hitOffset) {
+                runningProcess = nullptr;
+            } else if (finishedQuantum) { // not finished bursting but finished quantum and maybe I/O offset
+                int queueIndex = min(runningProcess->getQueueIndex() + 1,
+                                     numQueues - 1); // can't go above last queue
+                runningProcess->setQueueIndex(queueIndex);
+                cout << "Process " << runningProcess->getPid() << " has been demoted to queue "
+                     << runningProcess->getQueueIndex() << ".\n";
+
+                if(handleIO && hitIoOffset) {
                     IOQueue.push(*runningProcess);
                 } else {
                     shiftedProcesses.push_back(*runningProcess);
                 }
+                runningProcess = nullptr;
+            } else if (handleIO && hitIoOffset) { // only thing it hit was I/O offset
+                IOQueue.push(*runningProcess);
                 runningProcess = nullptr;
             }
         }
@@ -145,21 +158,8 @@ void Scheduler::runMFQS() {
         // Check for top queue that is not empty, check if queue num is the same as process running
         topProcess = getTopProcess();
 
-        if(topProcess == nullptr && runningProcess == nullptr) { // Nothing to put in CPU
-            if(allProcessesHaveArrived && IOQueue.empty() && shiftedProcesses.empty()) {
-                finished = true;
-            }
-        } else if(topProcess != nullptr && runningProcess == nullptr) { // Nothing ON CPU just put top process on
-            // Pop it off queue
-            try {
-                queues[topProcess->getQueueIndex()].queue.pop_front();
-            } catch (int e) {
-                cout << "An exception occured popping of queue. " << e << "\n";
-            }
-            runningProcess = topProcess;
-            topProcess = nullptr;
-        } else if (topProcess != nullptr && runningProcess != nullptr &&
-                   topProcess->getQueueIndex() > runningProcess->getQueueIndex()) { // Preempt
+        if (topProcess != nullptr && runningProcess != nullptr &&
+            topProcess->getQueueIndex() < runningProcess->getQueueIndex()) { // Preempt
             int queueIndex = runningProcess->getQueueIndex();
             if (queueIndex == numQueues - 1) {
                 queues[runningProcess->getQueueIndex()].queue.push_front(*runningProcess); // last queue FCFS
@@ -168,23 +168,32 @@ void Scheduler::runMFQS() {
             }
             cout << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
                  << " is now on cpu. \n";
-            queues[topProcess->getQueueIndex()].queue.pop_front();
-            runningProcess = topProcess;
+            newProcessOnCpu = true;
+        } else if (topProcess != nullptr && runningProcess == nullptr) { // Nothing ON CPU just put top process on
+            newProcessOnCpu = true;
         }
 
-        if(runningProcess != nullptr) {
-            if(runningProcess->getEndClockTick() <= 0) {
-                if (handleIO) {
-                    runningProcess->setEndClockTick(clock, IoOffset);
-                } else {
-                    runningProcess->setEndClockTick(clock);
-                }
-            }
+        if (newProcessOnCpu) {
+            queues[topProcess->getQueueIndex()].queue.pop_front();
+            runningProcess = topProcess;
+            runningProcess->setQuantumLeft(queues[runningProcess->getQueueIndex()].quantum);
+            topProcess = nullptr;
             cout << *runningProcess << " is on CPU.\n";
+            newProcessOnCpu = false;
+        }
+
+        //Check to see if were finsihed
+        if(topProcess == nullptr && runningProcess == nullptr && allProcessesHaveArrived
+            && IOQueue.empty() && shiftedProcesses.empty()) { // No processes left in system
+                finished = true;
         }
 
         clock++;
 
+        // reset variables
+        finishedQuantum  = false;
+        finishedBurst = false;
+        hitIoOffset = false;
     }
     cout << "Average wait time was: " << average.getAverageWaitTime() << "\n"
        << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
