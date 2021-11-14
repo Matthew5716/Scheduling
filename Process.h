@@ -45,7 +45,7 @@ public:
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
-    void decrementBurstLeft() { burstLeft--;}
+    bool decrementBurstLeft() { --burstLeft; return burstLeft <= 0;}
     void setBurstLeft(int burstL) { burstLeft = burstL; }
     void setCompletionTime(int compTime) { completionTime = compTime; }
     void setDeadline(int dead_line) { deadline = dead_line; }
@@ -59,20 +59,20 @@ public:
     // if not handling I/O
     void setEndClockTick(int currentClockTick) { endClockTick = currentClockTick + std::min(burstLeft, quantumLeft); }
     void setPid(int P_id) { pid = P_id; }
-    void decrementQuantumLeft() { quantumLeft--; }
+    bool decrementQuantumLeft() { --quantumLeft; return quantumLeft == 0; }
     void setQuantumLeft(int quant) { quantumLeft = quant; }
     void setAgeTime() { ageTime = 0; }
     void incrementAge() { ageTime++; }
     bool decrementIOOffsetLeft() { --ioOffsetLeft; return ioOffsetLeft == 0;}
-    viud setIOOffsetLeft(int offset) { ioOffsetLeft = offset; }
+    void setIOOffsetLeft(int offset) { ioOffsetLeft = offset; }
 
 
     // methods
     bool operator < (const Process& process) const {
         if( arrival != process.arrival) {
             return arrival < process.arrival;
-        } else { // If arrival is the same put higher priority process first.
-            return priority > process.priority;
+        } else { // If arrival is the same put higher priority process first. Lower priority value means higher priority
+            return priority < process.priority;
         }
     }
 
