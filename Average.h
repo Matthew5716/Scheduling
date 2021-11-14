@@ -8,7 +8,7 @@
 
 class Average {
 private:
-    int numProcesses;
+    long numProcesses;
     long totalWaitTime;
     long totalTurnAroundTime;
 public:
@@ -21,6 +21,7 @@ public:
     double getAverageWaitTime();
 
     double getAverageTurnAroundTime();
+    long getNumProcesses() { return numProcesses; }
 
     void addProcessToAverages(Process &process);
 

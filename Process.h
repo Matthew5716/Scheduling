@@ -71,8 +71,8 @@ public:
     bool operator < (const Process& process) const {
         if( arrival != process.arrival) {
             return arrival < process.arrival;
-        } else { // If arrival is the same put higher priority process first.
-            return priority > process.priority;
+        } else { // If arrival is the same put higher priority process first. Lower priority value means higher priority
+            return priority < process.priority;
         }
     }
 

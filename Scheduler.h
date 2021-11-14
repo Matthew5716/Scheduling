@@ -23,13 +23,13 @@ private:
     int processIndex;
     bool finished;
     queue<Process> arrivedProcesses;
-    queue<Process> IOQueue;
+    queue<Process*> IOQueue;
     int ageLimit;
 
-    void insertShiftedProcesses(vector<Process>& shiftedProcesses);
+    void insertShiftedProcesses(vector<Process*>& shiftedProcesses);
     bool addArrivedProcesses(int clockTime);
     Process* getTopProcess();
-    void updateAgeing(vector<Process>& shiftedProcesses);
+    void updateAgeing(vector<Process*>& shiftedProcesses);
 
 
 
