@@ -20,6 +20,7 @@ private:
     int endClockTick;
     int quantumLeft;
     int ageTime;
+    int ioOffsetLeft;
 public:
     // Constructor
     Process(); // default constructor
@@ -40,6 +41,7 @@ public:
     int getPid() { return pid; }
     int getQuantumLeft() { return quantumLeft; }
     int getAgeTime() { return ageTime; }
+    int getIOOffsetLeft() { return ioOffsetLeft; };
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
@@ -61,6 +63,8 @@ public:
     void setQuantumLeft(int quant) { quantumLeft = quant; }
     void setAgeTime() { ageTime = 0; }
     void incrementAge() { ageTime++; }
+    bool decrementIOOffsetLeft() { --ioOffsetLeft; return ioOffsetLeft == 0;}
+    viud setIOOffsetLeft(int offset) { ioOffsetLeft = offset; }
 
 
     // methods
