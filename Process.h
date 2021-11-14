@@ -45,7 +45,7 @@ public:
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
-    bool decrementBurstLeft() { --burstLeft; return burstLeft == 0;}
+    bool decrementBurstLeft() { --burstLeft; return burstLeft <= 0;}
     void setBurstLeft(int burstL) { burstLeft = burstL; }
     void setCompletionTime(int compTime) { completionTime = compTime; }
     void setDeadline(int dead_line) { deadline = dead_line; }

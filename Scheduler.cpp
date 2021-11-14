@@ -30,7 +30,7 @@ bool Scheduler::addArrivedProcesses(int clockTime) {
     while(processIterator->getArrival() == clockTime) {
         // add processes to top queue
         processIterator->setQuantumLeft(queues[0].quantum);
-        if (handleIO && processIterator->getIoTime() > 0) {
+        if (handleIO && processIterator->getIoTimeLeft() > 0) {
             processIterator->setIOOffsetLeft(IoOffset);
         }
         queues[0].queue.push_back(*processIterator);
@@ -178,9 +178,12 @@ void Scheduler::runMFQS() {
             runningProcess = topProcess;
             runningProcess->setQuantumLeft(queues[runningProcess->getQueueIndex()].quantum);
             topProcess = nullptr;
-            cout << *runningProcess << " is on CPU.\n";
+            cout << *runningProcess << " has obtained on CPU.\n";
             newProcessOnCpu = false;
+        } else if(runningProcess != nullptr) {
+            cout << *runningProcess << " is on CPU.\n";
         }
+
 
         //Check to see if were finsihed
         if(topProcess == nullptr && runningProcess == nullptr && allProcessesHaveArrived
