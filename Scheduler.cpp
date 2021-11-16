@@ -73,19 +73,25 @@ void Scheduler::updateAgeing(vector<Process*>& shiftedProcesses) {
 }
 
 void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Average& average, int clock, std::ostringstream& buffer) {
-    if(IOQueue.size() > 0) {
-        Process *ioProcess = IOQueue.front();
-        if (ioProcess->decrementIoTimeLeft()) {
-            if(ioProcess->getBurstLeft() == 0) {
-                buffer << "Process " << ioProcess->getPid() << " finished I/O and has finished running. \n";
-                ioProcess->setCompletionTime(clock);
-                average.addProcessToAverages(*ioProcess);
-            } else {
-                ioProcess->setQueueIndex(std::max(ioProcess->getQueueIndex() - 1, 0));
-                shiftedProcesses.push_back(ioProcess);
-                buffer << "Process " << ioProcess->getPid() << " finished I/O \n";
-            }
+    size_t size = IOQueue.size();
+    if(size > 0) {
+        Process *ioProcess;
+        for (size_t i = 0; i < size; i++) {
+            ioProcess = IOQueue.front();
             IOQueue.pop();
+            if (ioProcess->decrementIoTimeLeft()) {
+                if (ioProcess->getBurstLeft() == 0) {
+                    buffer << "Process " << ioProcess->getPid() << " finished I/O and has finished running. \n";
+                    ioProcess->setCompletionTime(clock);
+                    average.addProcessToAverages(*ioProcess);
+                } else {
+                    ioProcess->setQueueIndex(std::max(ioProcess->getQueueIndex() - 1, 0));
+                    shiftedProcesses.push_back(ioProcess);
+                    buffer << "Process " << ioProcess->getPid() << " finished I/O \n";
+                }
+            } else {
+                IOQueue.push(ioProcess);
+            }
         }
     }
 }
