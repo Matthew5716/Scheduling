@@ -207,10 +207,8 @@ void Scheduler::runMFQS() {
         finishedBurst = false;
         hitIoOffset = false;
 
-        if(clock % 50 == 0) {
-            cout << buffer.str();
-            buffer.clear();
-        }
+        cout << buffer.str();
+        buffer.clear();
     }
     cout << buffer.str();
     buffer.clear();
