@@ -5,14 +5,14 @@ double Average::getAverageWaitTime() {
     if(numProcesses == 0) {
         return 0;
     }
-    return (double) totalWaitTime / numProcesses;
+    return double(double(totalWaitTime) / numProcesses);
 }
 
 double Average::getAverageTurnAroundTime() {
     if(numProcesses == 0) {
         return 0;
     }
-    return (double) totalTurnAroundTime / numProcesses;
+    return double(double(totalTurnAroundTime) / numProcesses);
 
 }
 void Average::addProcessToAverages(Process& process) {

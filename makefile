@@ -1,5 +1,7 @@
 CC = g++
-CFLAGS = -Wall -g
+#CFLAGS = -Wall -g
+CFLAGS = -Wall
+
 
 schedule: main.o Scheduler.o InputManager.o Process.o Average.o
 	$(CC) $(CFLAGS) -o schedule main.o Scheduler.o InputManager.o Process.o Average.o

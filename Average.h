@@ -9,8 +9,8 @@
 class Average {
 private:
     long numProcesses;
-    long totalWaitTime;
-    long totalTurnAroundTime;
+    unsigned long long totalWaitTime;
+    unsigned long long totalTurnAroundTime;
 public:
     Average() {
         numProcesses = 0;
