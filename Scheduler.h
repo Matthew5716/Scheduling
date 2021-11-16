@@ -10,7 +10,7 @@
 #define SCHED_SCHEDULER_H
 using std::vector;
 using std::queue;
-using std::stringstream;
+using std::ostringstream;
 
 class Scheduler {
 private:
@@ -28,7 +28,7 @@ private:
     queue<Process> arrivedProcesses;
     queue<Process*> IOQueue;
     int ageLimit;
-    stringstream buffer;
+    ostringstream buffer;
 
     void insertShiftedProcesses(vector<Process*>& shiftedProcesses);
     bool addArrivedProcesses(int clockTime);
