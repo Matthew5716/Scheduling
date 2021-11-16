@@ -1,7 +1,6 @@
 #include "Scheduler.h"
 #include <cmath>
 #include <iostream>
-#include <sstream>
 #include <algorithm>
 
 using std::cout;
@@ -73,7 +72,7 @@ void Scheduler::updateAgeing(vector<Process*>& shiftedProcesses) {
     }
 }
 
-void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Average& average, int clock, std::ostringstream& buffer) {
+void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Average& average, int clock, ostringstream& buffer) {
     size_t size = IOQueue.size();
     if(size > 0) {
         Process *ioProcess;
@@ -208,7 +207,7 @@ void Scheduler::runMFQS() {
         finishedBurst = false;
         hitIoOffset = false;
 
-        if(clock % 100 == 0) {
+        if(clock % 50 == 0) {
             cout << buffer.str();
             buffer.clear();
         }
