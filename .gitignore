@@ -3,7 +3,6 @@ InputManager
 .vscode/settings.json
 .vscode/tasks.json
 InputManager.dSYM/Contents/Info.plist
-InputManager.cpp
 a.out
 Main.dSYM/Contents/Info.plist
 Process.h.gch
