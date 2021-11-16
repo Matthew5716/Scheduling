@@ -7,7 +7,7 @@
 using std::cout;
 using std::min;
 using std::sort;
-using std::stringstream;
+using std::ostringstream;
 
 Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing) {
     handleIO = false;
@@ -72,7 +72,7 @@ void Scheduler::updateAgeing(vector<Process*>& shiftedProcesses) {
     }
 }
 
-void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Average& average, int clock, std::stringstream& buffer) {
+void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Average& average, int clock, std::ostringstream& buffer) {
     if(IOQueue.size() > 0) {
         Process *ioProcess = IOQueue.front();
         if (ioProcess->decrementIoTimeLeft()) {
@@ -133,7 +133,7 @@ void Scheduler::runMFQS() {
                     runningProcess->setCompletionTime(clock);
                     average.addProcessToAverages(*runningProcess);
                     buffer << "Process " << runningProcess->getPid() << " has finished running at time " << clock
-                         << ".\n";
+                           << ".\n";
                 }
                 runningProcess = nullptr;
             } else if (finishedQuantum) { // not finished bursting but finished quantum and maybe I/O offset
@@ -141,7 +141,7 @@ void Scheduler::runMFQS() {
                                      numQueues - 1); // can't go above last queue
                 runningProcess->setQueueIndex(queueIndex);
                 buffer << "Process " << runningProcess->getPid() << " has been demoted to queue "
-                     << runningProcess->getQueueIndex() << ".\n";
+                       << runningProcess->getQueueIndex() << ".\n";
 
                 if(handleIO && hitIoOffset) {
                     IOQueue.push(runningProcess);
@@ -170,7 +170,7 @@ void Scheduler::runMFQS() {
                 queues[runningProcess->getQueueIndex()].queue.push_back(runningProcess); // other queues RR
             }
             buffer << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
-                 << " is now on cpu. \n";
+                   << " is now on cpu. \n";
             newProcessOnCpu = true;
         } else if (topProcess != nullptr && runningProcess == nullptr) { // Nothing ON CPU just put top process on
             newProcessOnCpu = true;
@@ -190,8 +190,8 @@ void Scheduler::runMFQS() {
 
         //Check to see if were finsihed
         if(topProcess == nullptr && runningProcess == nullptr && allProcessesHaveArrived
-            && IOQueue.empty() && shiftedProcesses.empty()) { // No processes left in system
-                finished = true;
+           && IOQueue.empty() && shiftedProcesses.empty()) { // No processes left in system
+            finished = true;
         }
 
         clock++;
@@ -209,7 +209,7 @@ void Scheduler::runMFQS() {
     cout << buffer.str();
     buffer.clear();
     cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: " << average.getAverageWaitTime() << "\n"
-       << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
+         << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
 }
 
 
@@ -232,6 +232,5 @@ void Scheduler::insertShiftedProcesses(vector<Process*>& shiftedProcesses) {
         shiftedProcesses.clear();
     }
 }
-
 
 
