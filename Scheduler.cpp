@@ -36,7 +36,7 @@ bool Scheduler::addArrivedProcesses(int clockTime) {
             processIterator->setIOOffsetLeft(IoOffset);
         }
         queues[0].queue.push_back(&(*processIterator));
-        buffer << "Process " << processIterator->getPid() << " has arrived. \n";
+        cout << "Process " << processIterator->getPid() << " has arrived. \n";
         ++processIterator;
         if(processIterator == processes.end()) {
             return true;
@@ -77,13 +77,13 @@ void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Aver
         Process *ioProcess = IOQueue.front();
         if (ioProcess->decrementIoTimeLeft()) {
             if(ioProcess->getBurstLeft() == 0) {
-                buffer << "Process " << ioProcess->getPid() << " finished I/O and has finished running. \n";
+                cout << "Process " << ioProcess->getPid() << " finished I/O and has finished running. \n";
                 ioProcess->setCompletionTime(clock);
                 average.addProcessToAverages(*ioProcess);
             } else {
                 ioProcess->setQueueIndex(std::max(ioProcess->getQueueIndex() - 1, 0));
                 shiftedProcesses.push_back(ioProcess);
-                buffer << "Process " << ioProcess->getPid() << " finished I/O \n";
+                cout << "Process " << ioProcess->getPid() << " finished I/O \n";
             }
             IOQueue.pop();
         }
@@ -107,7 +107,7 @@ void Scheduler::runMFQS() {
     bool newProcessOnCpu = false;
     buffer.clear();
     while(!finished) {
-        buffer << "ClockTick: " << clock << " \n";
+        cout << "ClockTick: " << clock << " \n";
         if(!allProcessesHaveArrived) {
             allProcessesHaveArrived = addArrivedProcesses(clock);
         }
@@ -132,7 +132,7 @@ void Scheduler::runMFQS() {
                 } else {
                     runningProcess->setCompletionTime(clock);
                     average.addProcessToAverages(*runningProcess);
-                    buffer << "Process " << runningProcess->getPid() << " has finished running at time " << clock
+                    cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock
                            << ".\n";
                 }
                 runningProcess = nullptr;
@@ -140,7 +140,7 @@ void Scheduler::runMFQS() {
                 int queueIndex = min(runningProcess->getQueueIndex() + 1,
                                      numQueues - 1); // can't go above last queue
                 runningProcess->setQueueIndex(queueIndex);
-                buffer << "Process " << runningProcess->getPid() << " has been demoted to queue "
+                cout << "Process " << runningProcess->getPid() << " has been demoted to queue "
                        << runningProcess->getQueueIndex() << ".\n";
 
                 if(handleIO && hitIoOffset) {
@@ -169,7 +169,7 @@ void Scheduler::runMFQS() {
             } else {
                 queues[runningProcess->getQueueIndex()].queue.push_back(runningProcess); // other queues RR
             }
-            buffer << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
+            cout << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
                    << " is now on cpu. \n";
             newProcessOnCpu = true;
         } else if (topProcess != nullptr && runningProcess == nullptr) { // Nothing ON CPU just put top process on
@@ -181,10 +181,10 @@ void Scheduler::runMFQS() {
             runningProcess = topProcess;
             runningProcess->setQuantumLeft(queues[runningProcess->getQueueIndex()].quantum);
             topProcess = nullptr;
-            buffer << *runningProcess << " has obtained CPU.\n";
+            cout << *runningProcess << " has obtained CPU.\n";
             newProcessOnCpu = false;
         } else if(runningProcess != nullptr) {
-            buffer << *runningProcess << " is on CPU.\n";
+            cout << *runningProcess << " is on CPU.\n";
         }
 
 
@@ -202,11 +202,11 @@ void Scheduler::runMFQS() {
         hitIoOffset = false;
 
         if(clock % 100 == 0) {
-            cout << buffer.str();
+//            cout << buffer.str();
             buffer.clear();
         }
     }
-    cout << buffer.str();
+//    cout << buffer.str();
     buffer.clear();
     cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: " << average.getAverageWaitTime() << "\n"
          << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
@@ -226,7 +226,7 @@ void Scheduler::insertShiftedProcesses(vector<Process*>& shiftedProcesses) {
             index = (*iter)->getQueueIndex();
             (*iter)->setQuantumLeft(queues[index].quantum);
             queues[index].queue.push_back(*iter);
-            buffer << "Process " << (*iter)->getPid() << " has been shifted to queue " <<(*iter)->getQueueIndex() << ".\n";
+            cout << "Process " << (*iter)->getPid() << " has been shifted to queue " <<(*iter)->getQueueIndex() << ".\n";
             ++iter;
         }
         shiftedProcesses.clear();
