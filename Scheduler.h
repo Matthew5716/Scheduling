@@ -3,11 +3,14 @@
 #include <queue>
 #include <stdlib.h>
 #include "Queue.h"
+#include <iostream>
+#include <sstream>
 
 #ifndef SCHED_SCHEDULER_H
 #define SCHED_SCHEDULER_H
 using std::vector;
 using std::queue;
+using std::stringstream;
 
 class Scheduler {
 private:
@@ -25,6 +28,7 @@ private:
     queue<Process> arrivedProcesses;
     queue<Process*> IOQueue;
     int ageLimit;
+    stringstream buffer;
 
     void insertShiftedProcesses(vector<Process*>& shiftedProcesses);
     bool addArrivedProcesses(int clockTime);
