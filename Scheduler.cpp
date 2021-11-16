@@ -72,7 +72,7 @@ void Scheduler::updateAgeing(vector<Process*>& shiftedProcesses) {
     }
 }
 
-void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Average& average, int clock, ostringstream& buffer) {
+void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Average& average, int clock, stringstream& buffer) {
     size_t size = IOQueue.size();
     if(size > 0) {
         Process *ioProcess;
