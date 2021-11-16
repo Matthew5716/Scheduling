@@ -8,6 +8,7 @@ using std::cout;
 using std::min;
 using std::sort;
 using std::stringstream;
+using std::ostringstream;
 
 Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing) {
     handleIO = false;
