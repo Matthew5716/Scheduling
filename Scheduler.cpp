@@ -206,11 +206,14 @@ void Scheduler::runMFQS() {
         finishedQuantum  = false;
         finishedBurst = false;
         hitIoOffset = false;
-
-        cout << buffer.str();
-        buffer.clear();
+        if(clock % 200 == 0) {
+            cout << buffer.str();
+            buffer.str("");
+            buffer.clear();
+        }
     }
     cout << buffer.str();
+    buffer.str("");
     buffer.clear();
     cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: " << average.getAverageWaitTime() << "\n"
        << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
