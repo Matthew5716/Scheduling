@@ -85,7 +85,7 @@ void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Aver
                     ioProcess->setCompletionTime(clock);
                     average.addProcessToAverages(*ioProcess);
                 } else {
-                    ioProcess->setQueueIndex(std::max(ioProcess->getQueueIndex() - 1, 0));
+                    ioProcess->setQueueIndex(0); // after I/O process goes to top queue
                     shiftedProcesses.push_back(ioProcess);
                     buffer << "Process " << ioProcess->getPid() << " finished I/O \n";
                 }
@@ -201,7 +201,6 @@ void Scheduler::runMFQS() {
         }
 
         clock++;
-
         // reset variables
         finishedQuantum  = false;
         finishedBurst = false;
