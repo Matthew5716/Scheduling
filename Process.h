@@ -21,6 +21,7 @@ private:
     int quantumLeft;
     int ageTime;
     int ioOffsetLeft;
+    int slackTime;
 public:
     // Constructor
     Process(); // default constructor
@@ -42,6 +43,7 @@ public:
     int getQuantumLeft() { return quantumLeft; }
     int getAgeTime() { return ageTime; }
     int getIOOffsetLeft() { return ioOffsetLeft; };
+    int getSlackTime() { return slackTime; }
     // Setters
     void setArrival(int arr) { arrival = arr; }
     void setBurst(int b) { burst = b;}
@@ -65,7 +67,7 @@ public:
     void incrementAge() { ageTime++; }
     bool decrementIOOffsetLeft() { --ioOffsetLeft; return ioOffsetLeft == 0;}
     void setIOOffsetLeft(int offset) { ioOffsetLeft = offset; }
-
+    void setSlackTime(int currentClockTick) { slackTime = deadline - (currentClockTick + burstLeft); }
 
     // methods
     bool operator < (const Process& process) const {
