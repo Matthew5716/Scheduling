@@ -63,7 +63,7 @@ void Scheduler::updateAgeing(vector<Process*>& shiftedProcesses) {
             queues[numQueues - 1].queue.pop_front();
             temp->incrementAge();
             if (temp->getAgeTime() == ageLimit) {
-                temp->setQueueIndex(temp->getQueueIndex() - 1);
+                temp->setQueueIndex(0); // put it in top queue
                 shiftedProcesses.push_back(temp);
             } else {
                 queues[numQueues - 1].queue.push_back(temp);
