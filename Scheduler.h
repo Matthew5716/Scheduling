@@ -23,9 +23,7 @@ private:
     int numQueues;
     bool handleIO;
     int IoOffset;
-    int processIndex;
     bool finished;
-    queue<Process> arrivedProcesses;
     queue<Process*> IOQueue;
     int ageLimit;
     stringstream buffer;

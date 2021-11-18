@@ -76,7 +76,6 @@ public:
         }
     }
 
-
     friend ostream& operator<<(ostream &os, const Process& process) {
         os << "Process with Pid: " << process.pid << " and queue level: " << process.queueIndex;
         return os;
