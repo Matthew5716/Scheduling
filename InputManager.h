@@ -15,6 +15,7 @@ private:
     int io_Offset;
     int ageing;
     int pid, burst, arrival, priority, deadline, io;
+    int minArrival;
     std::vector<Process> processes;
 
 
@@ -47,6 +48,9 @@ public:
 
     void setAgeing();
     int getAgeing() { return ageing; }
+
+    void setMinArrival(int arrival) { minArrival = arrival < minArrival ? arrival : minArrival; };
+    int getMinArrival() { return minArrival; }
 
     bool goodInput(int input);
     bool isSanitized(Process process);

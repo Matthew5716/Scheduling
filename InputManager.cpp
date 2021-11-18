@@ -314,6 +314,14 @@ bool InputManager::isSanitized(Process process) {
             return false;
         }
     }
+
+    if(algorithmType == 1) { // If real time algorithm
+        if(process.getArrival() + process.getBurst() > process.getDeadline()) { //Arrival + burst is more than the deadline specified
+            return false;
+        }
+    }
+
+    setMinArrival(process.getArrival());
     return true;
 }
 

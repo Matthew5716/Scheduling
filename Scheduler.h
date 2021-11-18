@@ -37,7 +37,7 @@ private:
 
 public:
     Scheduler();
-    Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing);
+    Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing, int startTick);
     void runMFQS();
 
     void setHandleIO(bool handleIo) { handleIO = handleIo; }

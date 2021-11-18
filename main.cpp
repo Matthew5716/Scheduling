@@ -8,7 +8,7 @@ int main() {
     input.getInput();
     if(input.getAlgorithmType() == 0) {
         Scheduler* scheduler = new Scheduler(input.getTimeQuantum(), input.getProcesses(), input.getNumQueues(),
-                                        input.getAgeing());
+                                        input.getAgeing(), input.getMinArrival());
         if (input.getHandleIO()) {
             scheduler->setHandleIO(input.getHandleIO());
             scheduler->setIoOffset(input.getIO_Offset());

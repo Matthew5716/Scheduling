@@ -9,7 +9,7 @@ using std::sort;
 using std::stringstream;
 using std::ostringstream;
 
-Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing) {
+Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues, int ageing, int startTick) {
     handleIO = false;
     IoOffset = -1;
     quantum = timeQuantum;
@@ -18,6 +18,7 @@ Scheduler::Scheduler(int timeQuantum, vector<Process>& allProcesses, int nQueues
     finished = false;
     numQueues = nQueues;
     ageLimit = ageing;
+    clock = startTick;
     for(int i = 0; i < nQueues; i++) {
         queues[i].quantum = timeQuantum * pow(2,i);
     }
@@ -101,7 +102,6 @@ void Scheduler::runMFQS() {
         cout << "No processes.";
         return;
     }
-    clock = 0;
     vector<Process*> shiftedProcesses;
     bool allProcessesHaveArrived;
 
