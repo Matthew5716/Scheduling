@@ -9,7 +9,7 @@ RTScheduler::RTScheduler(vector<Process>& allProcesses, bool hard) {
 }
 
 
-
+// issue with deadline, need to empty out topProcesses if the deadline is equal to the clock tick.
 void RTScheduler::run() {
     if (processes.size() == 0) {
         cout << "No processes.";
@@ -49,6 +49,26 @@ void RTScheduler::run() {
         }
 
         // update state of topProcesses
+        vector<Process*> temps;
+        Process* temp = nullptr;
+        while(!topProcesses.empty()) { // set slack time
+            temp = topProcesses.top();
+            topProcesses.pop();
+            temp->setSlackTime(clock);
+            if (temp->getSlackTime() < 0) {
+                failed = true;
+//                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
+            } else {
+                temps.push_back(temp);
+            }
+        }
+
+        while (!temps.empty()){ // add temps back to queue
+            temp = temps.back();
+            temps.pop_back();
+            topProcesses.push(temp);
+        }
+
         int deadline;
         if(!queue.empty()) {
             topOfQueue = queue.top();
@@ -67,7 +87,8 @@ void RTScheduler::run() {
         if(topOfQueue != nullptr) {
             if (topProcess == nullptr && topOfQueue != nullptr) { // topProcesses empty
                 while (!queue.empty() &&
-                       queue.top()->getDeadline() == deadline) { // populate topProccesses with first deadline
+                       queue.top()->getDeadline() == deadline) { // populate top Proccesses with first deadline
+                    queue.top()->setSlackTime(clock);
                     topProcesses.push(queue.top());
                     queue.pop();
                 }
@@ -78,38 +99,19 @@ void RTScheduler::run() {
                 }
                 while (!queue.empty() &&
                        queue.top()->getDeadline() == deadline) { // populate topProccesses with earlier deadline
+                    queue.top()->setSlackTime(clock);
                     topProcesses.push(queue.top());
                     queue.pop();
                 }
             } else if (topOfQueue->getDeadline() == topProcess->getDeadline()) { // add to topProcesses
                 while (!queue.empty() &&
                        queue.top()->getDeadline() == deadline) { // populate topProccesses with earlier deadline
+                    queue.top()->setSlackTime(clock);
                     topProcesses.push(queue.top());
                     queue.pop();
                 }
             }
         }
-
-        vector<Process*> temps;
-        Process* temp = nullptr;
-        while(!topProcesses.empty()) { // set slack time
-            temp = topProcesses.top();
-            topProcesses.pop();
-            temp->setSlackTime(clock);
-            if (temp->getSlackTime() <= 0) {
-                failed = true;
-//                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
-            } else {
-                temps.push_back(temp);
-            }
-        }
-
-        while (!temps.empty()){ // add temps back to queue
-            temp = temps.back();
-            temps.pop_back();
-            topProcesses.push(temp);
-        }
-
 
         if(runningProcess == nullptr && !topProcesses.empty()) { // no running process
             runningProcess = topProcesses.top();
