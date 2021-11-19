@@ -335,10 +335,10 @@ void InputManager::getInput() {
         setNumQueues();
         setTimeQuantum();
         setAgeing();
-    }
-    setHandleIO();
-    if(getHandleIO() == true) {
-        setIO_Offset();
+        setHandleIO();
+        if(getHandleIO() == true) {
+            setIO_Offset();
+        }
     }
     setReadType();
     if(getReadType() == 0) {
