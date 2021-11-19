@@ -18,10 +18,13 @@ void RTScheduler::run() {
     clock = 0;
     bool allProcessesHaveArrived = false;
     Process *runningProcess = nullptr; // process on CPU
-    Process *topProcess = nullptr; // front of top queue that's not empty
+    Process *topProcess = nullptr; // top of topProcesses
+    Process *topOfQueue = nullptr; // top of topProcesses
+    finished = false;
+    bool failed = false;
     buffer.clear();
     bool finishedBurst;
-    while (!allProcessesHaveArrived) {
+    while (!finished) {
         if(!allProcessesHaveArrived) {
             allProcessesHaveArrived = addArrivedProcesses(clock);
         }
@@ -29,20 +32,111 @@ void RTScheduler::run() {
         //TODO: update state of running process
         if (runningProcess != nullptr) { // if there is a running process
             finishedBurst = runningProcess->decrementBurstLeft();
+            if(finishedBurst) {
+                runningProcess->setCompletionTime(clock);
+                average.addProcessToAverages(*runningProcess);
+                buffer << "Process " << runningProcess->getPid() << " has finished running at time " << clock
+                       << ".\n";
+                runningProcess = nullptr;
+            }
+            runningProcess->setSlackTime(clock);
+            if(runningProcess->getSlackTime() < 0) {
+                cout << "Process with pid " << runningProcess->getPid() << " didn't finish bursting in time \n";
+                failed = true;
+                runningProcess = nullptr;
+            }
         }
 
-        //TODO: update the state of top processes, if any miss deadline and its hard realtime fail
-        // Check if the top process on priority_queue has the same deadline, pop that and add
-        // If it has earlier deadline, push top processes back and grab new list based on earlier deadline
-        // else update slack times
+        // update state of topProcesses
+        int deadline;
+        if(!queue.empty()) {
+            topOfQueue = queue.top();
+            deadline = topOfQueue->getDeadline();
+        } else {
+            topOfQueue = nullptr;
+            deadline = -1;
+        }
 
-        //TODO: check for preemption
-        // check if topProcess in topProcesses has earlier deadline or same dealine earlier slack, potentially also arrival
+        if(!topProcesses.empty()) {
+            topProcess = topProcesses.top();
+        } else {
+            topProcess = nullptr;
+        }
+
+        if(topOfQueue != nullptr) {
+            if (topProcess == nullptr && topOfQueue != nullptr) { // topProcesses empty
+                while (!queue.empty() &&
+                       queue.top()->getDeadline() == deadline) { // populate topProccesses with first deadline
+                    topProcesses.push(queue.top());
+                    queue.pop();
+                }
+            } else if (topOfQueue->getDeadline() < topProcess->getDeadline()) { // switch out top temps
+                while (!topProcesses.empty()) { // empty out top process
+                    queue.push(topProcesses.top());
+                    topProcesses.pop();
+                }
+                while (!queue.empty() &&
+                       queue.top()->getDeadline() == deadline) { // populate topProccesses with earlier deadline
+                    topProcesses.push(queue.top());
+                    queue.pop();
+                }
+            } else if (topOfQueue->getDeadline() == topProcess->getDeadline()) { // add to topProcesses
+                while (!queue.empty() &&
+                       queue.top()->getDeadline() == deadline) { // populate topProccesses with earlier deadline
+                    topProcesses.push(queue.top());
+                    queue.pop();
+                }
+            }
+        }
+
+        vector<Process*> temps;
+        Process* temp = nullptr;
+        while(!topProcesses.empty()) { // set slack time
+            temp = topProcesses.top();
+            topProcesses.pop();
+            temp->setSlackTime(clock);
+            if (temp->getSlackTime() <= 0) {
+                failed = true;
+                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
+            } else {
+                temps.push_back(temp);
+            }
+        }
+
+        while (!temps.empty()){ // add temps back to queue
+            temp = temps.back();
+            temps.pop_back();
+            topProcesses.push(temp);
+        }
 
 
-        //TODO:
+        if(runningProcess == nullptr && !topProcesses.empty()) { // no running process
+            runningProcess = topProcesses.top();
+            topProcesses.pop();
+        } else if(!topProcesses.empty() ){
+            topProcess = topProcesses.top();
+            bool earlier = topProcess->getDeadline() < runningProcess->getDeadline();
+            bool same =  topProcess->getDeadline() == runningProcess->getDeadline();
+            bool lessSlack = topProcess->getSlackTime() < runningProcess->getSlackTime();
+            if(earlier || (same && lessSlack)) { // preempt
+                queue.push(runningProcess);
+                runningProcess = topProcesses.top();
+                topProcesses.pop();
+                cout << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
+                       << " is now on cpu. \n";
+            }
+        }
 
+        if(hard && failed) {
+            cout << "A process did not get scheduled terminating. \n ";
+            finished = true;
+        }
+
+        if(allProcessesHaveArrived && topProcesses.empty() && queue.empty() && runningProcess == nullptr) {
+            finished = true;
+        }
         clock++;
+
         // reset variables
 
 //        if (clock % 200 == 0) {
@@ -52,11 +146,6 @@ void RTScheduler::run() {
 //        }
     }
 
-    while(!queue.empty()) {
-        runningProcess = queue.top();
-        queue.pop();
-        cout << "Process with deadline: " << runningProcess->getDeadline() << " and priority: " << runningProcess->getPriority() << "\n";
-    }
 //    cout << buffer.str();
 //    buffer.str("");
 //    buffer.clear();
@@ -78,14 +167,7 @@ bool RTScheduler::addArrivedProcesses(int clockTime) {
     return false;
 }
 
-bool RTScheduler::updateTopProcesses(int clockTime) {
 
 
 
-   //update the state of top processes, if any miss deadline and its hard realtime fail
-    // Check if the top process on priority_queue has the same deadline, pop that and add
-    // If it has earlier deadline, push top processes back and grab new list based on earlier deadline
-    // else update slack times
-
-}
 

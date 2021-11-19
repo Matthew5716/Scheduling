@@ -25,6 +25,17 @@ public:
     }
 };
 
+class MinSlackComparator {
+public:
+    bool operator()(Process *lh, Process *rh) {
+        if (lh->getSlackTime() != rh->getSlackTime()) {
+            return lh->getSlackTime() > rh->getSlackTime(); // want lower slacktime first
+        } else {
+            return lh->getArrival() > rh->getArrival();
+        }
+    }
+};
+
 class RTScheduler {
 
  private:
@@ -32,11 +43,11 @@ class RTScheduler {
         Average average;
         vector<Process> processes;
         vector<Process>::iterator processIterator;
-        vector<Process*> topProcesses;
         bool finished;
         bool hard;
         stringstream buffer;
         priority_queue<Process*, vector<Process*>, RTComparator> queue;
+        priority_queue<Process*, vector<Process*>, MinSlackComparator> topProcesses;
         bool addArrivedProcesses(int clockTime);
         bool updateTopProcesses(int clockTime);
 //        Process* getTopProcess();
