@@ -25,6 +25,7 @@ void RTScheduler::run() {
     buffer.clear();
     bool finishedBurst;
     while (!finished) {
+        cout << "Clock Time: " << clock << "\n";
         if(!allProcessesHaveArrived) {
             allProcessesHaveArrived = addArrivedProcesses(clock);
         }
@@ -116,6 +117,8 @@ void RTScheduler::run() {
             topProcesses.pop();
         } else if(!topProcesses.empty() ){
             topProcess = topProcesses.top();
+            topProcess->setSlackTime(clock);
+            runningProcess->setSlackTime(clock);
             bool earlier = topProcess->getDeadline() < runningProcess->getDeadline();
             bool same =  topProcess->getDeadline() == runningProcess->getDeadline();
             bool lessSlack = topProcess->getSlackTime() < runningProcess->getSlackTime();
