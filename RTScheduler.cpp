@@ -38,12 +38,13 @@ void RTScheduler::run() {
                 buffer << "Process " << runningProcess->getPid() << " has finished running at time " << clock
                        << ".\n";
                 runningProcess = nullptr;
-            }
-            runningProcess->setSlackTime(clock);
-            if(runningProcess->getSlackTime() < 0) {
-                cout << "Process with pid " << runningProcess->getPid() << " didn't finish bursting in time \n";
-                failed = true;
-                runningProcess = nullptr;
+            } else {
+                runningProcess->setSlackTime(clock);
+                if (runningProcess->getSlackTime() < 0) {
+                    cout << "Process with pid " << runningProcess->getPid() << " didn't finish bursting in time \n";
+                    failed = true;
+                    runningProcess = nullptr;
+                }
             }
         }
 
