@@ -25,18 +25,17 @@ void RTScheduler::run() {
     buffer.clear();
     bool finishedBurst;
     while (!finished) {
-        cout << "Clock Time: " << clock << "\n";
+//        cout << "Clock Time: " << clock << "\n";
         if(!allProcessesHaveArrived) {
             allProcessesHaveArrived = addArrivedProcesses(clock);
         }
 
-        //TODO: update state of running process
         if (runningProcess != nullptr) { // if there is a running process
             finishedBurst = runningProcess->decrementBurstLeft();
             if(finishedBurst) {
                 runningProcess->setCompletionTime(clock);
                 average.addProcessToAverages(*runningProcess);
-                buffer << "Process " << runningProcess->getPid() << " has finished running at time " << clock
+                cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock
                        << ".\n";
                 runningProcess = nullptr;
             } else {
@@ -99,7 +98,7 @@ void RTScheduler::run() {
             temp->setSlackTime(clock);
             if (temp->getSlackTime() <= 0) {
                 failed = true;
-                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
+//                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
             } else {
                 temps.push_back(temp);
             }
