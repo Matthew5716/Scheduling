@@ -49,7 +49,6 @@ class RTScheduler {
         priority_queue<Process*, vector<Process*>, RTComparator> queue;
         priority_queue<Process*, vector<Process*>, MinSlackComparator> topProcesses;
         bool addArrivedProcesses(int clockTime);
-        bool updateTopProcesses(int clockTime);
 //        Process* getTopProcess();
 
 
@@ -59,7 +58,6 @@ class RTScheduler {
         void run();
 
 
-        void setProccees(vector<Process>& allProcesses) { processes = allProcesses;}
 };
 
 

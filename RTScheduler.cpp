@@ -150,9 +150,9 @@ void RTScheduler::run() {
 //    cout << buffer.str();
 //    buffer.str("");
 //    buffer.clear();
-//    cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: "
-//         << average.getAverageWaitTime() << "\n"
-//         << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
+    cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: "
+         << average.getAverageWaitTime() << "\n"
+         << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
 }
 
 bool RTScheduler::addArrivedProcesses(int clockTime) {
