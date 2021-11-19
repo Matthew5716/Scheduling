@@ -32,11 +32,13 @@ class RTScheduler {
         Average average;
         vector<Process> processes;
         vector<Process>::iterator processIterator;
+        vector<Process*> topProcesses;
         bool finished;
         bool hard;
         stringstream buffer;
         priority_queue<Process*, vector<Process*>, RTComparator> queue;
         bool addArrivedProcesses(int clockTime);
+        bool updateTopProcesses(int clockTime);
 //        Process* getTopProcess();
 
 
