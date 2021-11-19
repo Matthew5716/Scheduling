@@ -157,8 +157,12 @@ void RTScheduler::run() {
 
 bool RTScheduler::addArrivedProcesses(int clockTime) {
     while(processIterator->getArrival() == clockTime) {
-        // add processes to top queue
-        queue.push(&(*processIterator));
+        processIterator->setSlackTime(clockTime);
+        if(processIterator->getSlackTime() < 0) {
+            cout << "Process with pid " << processIterator->getPid() << " will not get scheduled \n";
+        } else {
+            queue.push(&(*processIterator));
+        }
         buffer << "Process " << processIterator->getPid() << " has arrived. \n";
         ++processIterator;
         if(processIterator == processes.end()) {
