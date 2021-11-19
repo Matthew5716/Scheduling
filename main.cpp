@@ -15,7 +15,8 @@ int main() {
         }
         scheduler->runMFQS();
     } else {
-        RTScheduler* scheduler = new RTScheduler(input.getProcesses(),input.getRealTimeType());
+        bool hard = input.getRealTimeType() == 1;
+        RTScheduler* scheduler = new RTScheduler(input.getProcesses(), hard);
         scheduler->run();
     }
 
