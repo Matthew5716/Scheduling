@@ -7,6 +7,7 @@ RTScheduler::RTScheduler(vector<Process>& allProcesses, bool hard, int clockStar
     processIterator = processes.begin();
     this->hard -= hard;
     clock = clockStart;
+    failureTime = 1000000;
 }
 
 
@@ -44,6 +45,7 @@ void RTScheduler::run() {
                 if (runningProcess->getSlackTime() < 0) {
                     buffer << "Process with pid " << runningProcess->getPid() << " didn't finish bursting in time \n";
                     failed = true;
+                    setFailureTime(runningProcess->getDeadline());
                     runningProcess = nullptr;
                 }
             }
@@ -59,6 +61,7 @@ void RTScheduler::run() {
             if (temp->getSlackTime() < 0) {
                 failed = true;
                 buffer << "Process with pid " << temp->getPid() << " will not get scheduled \n";
+                setFailureTime(temp->getDeadline());
             } else {
                 temps.push_back(temp);
             }
@@ -118,8 +121,8 @@ void RTScheduler::run() {
             }
         }
 
-        if(hard && failed) {
-            buffer << "A process did not get scheduled terminating. \n ";
+        if(hard && failed && failureTime == clock) {
+            buffer << "A process did not get scheduled before its deadline terminating. \n ";
             finished = true;
         }
 
@@ -145,7 +148,7 @@ void RTScheduler::run() {
     buffer.str("");
     buffer.clear();
 
-    cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: "
+    cout << "\nTotal Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: "
          << average.getAverageWaitTime() << "\n"
          << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
 }
@@ -170,6 +173,7 @@ Process* RTScheduler::getTopOfQueue() {
         if ( queue.top()->getSlackTime() < 0) {
             failed = true;
                 buffer << "Process with pid " << queue.top()->getPid() << " will not get scheduled \n";
+            setFailureTime(queue.top()->getDeadline());
             queue.pop();
         } else {
             valid = true;
@@ -187,6 +191,8 @@ bool RTScheduler::addArrivedProcesses(int clockTime) {
         processIterator->setSlackTime(clockTime);
         if(processIterator->getSlackTime() < 0) {
             buffer << "Process with pid " << processIterator->getPid() << " will not get scheduled \n";
+            failed = true;
+            setFailureTime(processIterator->getDeadline());
         } else {
             queue.push(&(*processIterator));
         }

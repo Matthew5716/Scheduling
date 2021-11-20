@@ -46,11 +46,14 @@ class RTScheduler {
         bool finished;
         bool hard;
         bool failed;
+        int failureTime;
         stringstream buffer;
         priority_queue<Process*, vector<Process*>, RTComparator> queue;
         priority_queue<Process*, vector<Process*>, MinSlackComparator> topProcesses;
         bool addArrivedProcesses(int clockTime);
         void addToTopProcesses(int deadline);
+        void setFailureTime(int time) { failureTime = std::min(failureTime, time);}
+
         Process *getTopOfQueue();
 //        Process* getTopProcess();
 

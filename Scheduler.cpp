@@ -65,6 +65,7 @@ void Scheduler::updateAgeing(vector<Process*>& shiftedProcesses) {
             temp->incrementAge();
             if (temp->getAgeTime() == ageLimit) {
                 temp->setQueueIndex(0); // put it in top queue
+                temp->setAgeTime();
                 shiftedProcesses.push_back(temp);
             } else {
                 queues[numQueues - 1].queue.push_back(temp);
@@ -142,7 +143,7 @@ void Scheduler::runMFQS() {
                          << ".\n";
                 }
                 runningProcess = nullptr;
-            } else if (finishedQuantum) { // not finished bursting but finished quantum and maybe I/O offset
+            } else if (finishedQuantum && runningProcess->getQueueIndex() != numQueues -1) { // not finished bursting but finished quantum and maybe I/O offset
                 int queueIndex = min(runningProcess->getQueueIndex() + 1,
                                      numQueues - 1); // can't go above last queue
                 runningProcess->setQueueIndex(queueIndex);
@@ -214,7 +215,7 @@ void Scheduler::runMFQS() {
     cout << buffer.str();
     buffer.str("");
     buffer.clear();
-    cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: " << average.getAverageWaitTime() << "\n"
+    cout << "\nTotal Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: " << average.getAverageWaitTime() << "\n"
        << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
 }
 
