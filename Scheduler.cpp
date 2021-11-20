@@ -84,7 +84,7 @@ void updateIO(queue<Process*>& IOQueue, vector<Process*>& shiftedProcesses, Aver
                 if (ioProcess->getBurstLeft() == 0) {
                     buffer << "Process " << ioProcess->getPid() << " finished I/O and has finished running. \n";
                     ioProcess->setCompletionTime(clock);
-                    average.addProcessToAverages(*ioProcess);
+                    average.addProcessToAverages(*ioProcess, true);
                 } else {
                     ioProcess->setQueueIndex(0); // after I/O process goes to top queue
                     shiftedProcesses.push_back(ioProcess);
@@ -137,7 +137,7 @@ void Scheduler::runMFQS() {
                     IOQueue.push(runningProcess);
                 } else {
                     runningProcess->setCompletionTime(clock);
-                    average.addProcessToAverages(*runningProcess);
+                    average.addProcessToAverages(*runningProcess, handleIO);
                     buffer << "Process " << runningProcess->getPid() << " has finished running at time " << clock
                          << ".\n";
                 }

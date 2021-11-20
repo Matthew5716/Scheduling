@@ -28,7 +28,7 @@ public:
     Process(int pid, int arrival, int burst, int deadline, int priority, int ioTime);
     // Getters
     int getTurnaroundTime();
-    int getWaitTime();
+    int getWaitTime(bool hasIO);
     int getArrival() { return arrival; }
     int getBurst() { return burst; }
     int getBurstLeft() { return burstLeft; }

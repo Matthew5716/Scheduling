@@ -57,7 +57,7 @@ class RTScheduler {
 
     public:
 //        RTScheduler();
-        RTScheduler(vector<Process>& allProcesses, bool hard);
+        RTScheduler(vector<Process>& allProcesses, bool hard, int clockStart);
         void run();
 
 

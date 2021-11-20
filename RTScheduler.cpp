@@ -2,10 +2,11 @@
 #include "RTScheduler.h"
 using std::cout;
 
-RTScheduler::RTScheduler(vector<Process>& allProcesses, bool hard) {
+RTScheduler::RTScheduler(vector<Process>& allProcesses, bool hard, int clockStart) {
     processes = allProcesses;
     processIterator = processes.begin();
     this->hard -= hard;
+    clock = clockStart;
 }
 
 
@@ -15,7 +16,6 @@ void RTScheduler::run() {
         cout << "No processes.";
         return;
     }
-    clock = 0;
     bool allProcessesHaveArrived = false;
     Process *runningProcess = nullptr; // process on CPU
     Process *topProcess = nullptr; // top of topProcesses
@@ -23,9 +23,10 @@ void RTScheduler::run() {
     finished = false;
     failed = false;
     buffer.clear();
+    buffer.str("");
     bool finishedBurst;
     while (!finished) {
-//        cout << "Clock Time: " << clock << "\n";
+        buffer << "Clock Time: " << clock << "\n";
         if(!allProcessesHaveArrived) {
             allProcessesHaveArrived = addArrivedProcesses(clock);
         }
@@ -34,14 +35,14 @@ void RTScheduler::run() {
             finishedBurst = runningProcess->decrementBurstLeft();
             if(finishedBurst) {
                 runningProcess->setCompletionTime(clock);
-                average.addProcessToAverages(*runningProcess);
-                cout << "Process " << runningProcess->getPid() << " has finished running at time " << clock
+                average.addProcessToAverages(*runningProcess, false);
+                buffer << "Process " << runningProcess->getPid() << " has finished running at time " << clock
                        << ".\n";
                 runningProcess = nullptr;
             } else {
                 runningProcess->setSlackTime(clock);
                 if (runningProcess->getSlackTime() < 0) {
-                    cout << "Process with pid " << runningProcess->getPid() << " didn't finish bursting in time \n";
+                    buffer << "Process with pid " << runningProcess->getPid() << " didn't finish bursting in time \n";
                     failed = true;
                     runningProcess = nullptr;
                 }
@@ -57,7 +58,7 @@ void RTScheduler::run() {
             temp->setSlackTime(clock);
             if (temp->getSlackTime() < 0) {
                 failed = true;
-//                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
+                buffer << "Process with pid " << temp->getPid() << " will not get scheduled \n";
             } else {
                 temps.push_back(temp);
             }
@@ -112,14 +113,18 @@ void RTScheduler::run() {
                 queue.push(runningProcess);
                 runningProcess = topProcesses.top();
                 topProcesses.pop();
-                cout << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
+                buffer << *runningProcess << " was preempted by " << *topProcess << "\n" << *topProcess
                        << " is now on cpu. \n";
             }
         }
 
         if(hard && failed) {
-            cout << "A process did not get scheduled terminating. \n ";
+            buffer << "A process did not get scheduled terminating. \n ";
             finished = true;
+        }
+
+        if(runningProcess != nullptr) {
+            buffer << "Process with pid: " << runningProcess->getPid() << " is on CPU. \n";
         }
 
         if(allProcessesHaveArrived && topProcesses.empty() && queue.empty() && runningProcess == nullptr) {
@@ -129,16 +134,17 @@ void RTScheduler::run() {
 
         // reset variables
 
-//        if (clock % 200 == 0) {
-//            cout << buffer.str();
-//            buffer.str("");
-//            buffer.clear();
-//        }
+        if (clock % 200 == 0) {
+            cout << buffer.str();
+            buffer.str("");
+            buffer.clear();
+        }
     }
 
-//    cout << buffer.str();
-//    buffer.str("");
-//    buffer.clear();
+    cout << buffer.str();
+    buffer.str("");
+    buffer.clear();
+
     cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: "
          << average.getAverageWaitTime() << "\n"
          << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
@@ -163,7 +169,7 @@ Process* RTScheduler::getTopOfQueue() {
         queue.top()->setSlackTime(clock);
         if ( queue.top()->getSlackTime() < 0) {
             failed = true;
-//                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
+                buffer << "Process with pid " << queue.top()->getPid() << " will not get scheduled \n";
             queue.pop();
         } else {
             valid = true;
@@ -180,11 +186,11 @@ bool RTScheduler::addArrivedProcesses(int clockTime) {
     while(processIterator->getArrival() == clockTime) {
         processIterator->setSlackTime(clockTime);
         if(processIterator->getSlackTime() < 0) {
-            cout << "Process with pid " << processIterator->getPid() << " will not get scheduled \n";
+            buffer << "Process with pid " << processIterator->getPid() << " will not get scheduled \n";
         } else {
             queue.push(&(*processIterator));
         }
-        buffer << "Process " << processIterator->getPid() << " has arrived. \n";
+        buffer << "Process " << processIterator->getPid() << " with deadline " << processIterator->getDeadline() << " has arrived. \n";
         ++processIterator;
         if(processIterator == processes.end()) {
             return true;

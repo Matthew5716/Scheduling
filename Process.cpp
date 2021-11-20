@@ -37,11 +37,14 @@ int Process::getTurnaroundTime() {
     return completionTime - arrival;
 }
 
-int Process::getWaitTime() {
+int Process::getWaitTime(bool hasIO) {
     if (completionTime == -1) {
         return -1;
     }
-    return completionTime - arrival - burst - ioTime;
+    if(hasIO) {
+        return completionTime - arrival - burst - ioTime;
+    }
+    return completionTime - arrival - burst;
 }
 
  void Process::setEndClockTick(int currentClockTick, int ioOffset) {

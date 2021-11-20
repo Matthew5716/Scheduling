@@ -23,7 +23,7 @@ public:
     double getAverageTurnAroundTime();
     long getNumProcesses() { return numProcesses; }
 
-    void addProcessToAverages(Process &process);
+    void addProcessToAverages(Process &process, bool hasIO);
 
 };
 #endif //SCHED_AVERAGE_H

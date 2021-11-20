@@ -15,8 +15,8 @@ double Average::getAverageTurnAroundTime() {
     return double(double(totalTurnAroundTime) / numProcesses);
 
 }
-void Average::addProcessToAverages(Process& process) {
-    int waitTime = process.getWaitTime();
+void Average::addProcessToAverages(Process& process, bool hasIO) {
+    int waitTime = process.getWaitTime(hasIO);
     int pTurnAroundTime = process.getTurnaroundTime();
     if(waitTime != -1 && pTurnAroundTime != -1) {
         numProcesses++;
