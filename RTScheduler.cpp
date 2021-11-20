@@ -21,7 +21,7 @@ void RTScheduler::run() {
     Process *topProcess = nullptr; // top of topProcesses
     Process *topOfQueue = nullptr; // top of topProcesses
     finished = false;
-    bool failed = false;
+    failed = false;
     buffer.clear();
     bool finishedBurst;
     while (!finished) {
@@ -69,12 +69,12 @@ void RTScheduler::run() {
             topProcesses.push(temp);
         }
 
+
+        topOfQueue = getTopOfQueue();
         int deadline;
-        if(!queue.empty()) {
-            topOfQueue = queue.top();
+        if(topOfQueue != nullptr) {
             deadline = topOfQueue->getDeadline();
         } else {
-            topOfQueue = nullptr;
             deadline = -1;
         }
 
@@ -86,30 +86,15 @@ void RTScheduler::run() {
 
         if(topOfQueue != nullptr) {
             if (topProcess == nullptr && topOfQueue != nullptr) { // topProcesses empty
-                while (!queue.empty() &&
-                       queue.top()->getDeadline() == deadline) { // populate top Proccesses with first deadline
-                    queue.top()->setSlackTime(clock);
-                    topProcesses.push(queue.top());
-                    queue.pop();
-                }
+                addToTopProcesses(deadline);
             } else if (topOfQueue->getDeadline() < topProcess->getDeadline()) { // switch out top temps
                 while (!topProcesses.empty()) { // empty out top process
                     queue.push(topProcesses.top());
                     topProcesses.pop();
                 }
-                while (!queue.empty() &&
-                       queue.top()->getDeadline() == deadline) { // populate topProccesses with earlier deadline
-                    queue.top()->setSlackTime(clock);
-                    topProcesses.push(queue.top());
-                    queue.pop();
-                }
+                addToTopProcesses(topOfQueue->getDeadline());
             } else if (topOfQueue->getDeadline() == topProcess->getDeadline()) { // add to topProcesses
-                while (!queue.empty() &&
-                       queue.top()->getDeadline() == deadline) { // populate topProccesses with earlier deadline
-                    queue.top()->setSlackTime(clock);
-                    topProcesses.push(queue.top());
-                    queue.pop();
-                }
+                addToTopProcesses(topOfQueue->getDeadline());
             }
         }
 
@@ -157,6 +142,38 @@ void RTScheduler::run() {
     cout << "\n Total Processes Scheduled: " << average.getNumProcesses() << "\nAverage wait time was: "
          << average.getAverageWaitTime() << "\n"
          << "Average TurnAroundTime was: " << average.getAverageTurnAroundTime() << "\n";
+}
+
+void RTScheduler::addToTopProcesses(int deadline) {
+    Process* topOfQueue;
+    while (!queue.empty() &&
+           queue.top()->getDeadline() == deadline) { // populate top Proccesses with first deadline
+        topOfQueue = getTopOfQueue();
+        if(topOfQueue != nullptr && topOfQueue->getDeadline() == deadline) {
+            topProcesses.push(queue.top());
+            queue.pop();
+        }
+    }
+}
+
+Process* RTScheduler::getTopOfQueue() {
+    bool valid = false;
+    //update state of queue
+    while(!queue.empty() && !valid) { // set slack time
+        queue.top()->setSlackTime(clock);
+        if ( queue.top()->getSlackTime() < 0) {
+            failed = true;
+//                cout << "Process with pid " << temp->getPid() << " will not get scheduled \n";
+            queue.pop();
+        } else {
+            valid = true;
+        }
+    }
+    if (!queue.empty()) {
+        return queue.top();
+    } else {
+        return nullptr;
+    }
 }
 
 bool RTScheduler::addArrivedProcesses(int clockTime) {

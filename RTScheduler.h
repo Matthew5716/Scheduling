@@ -45,10 +45,13 @@ class RTScheduler {
         vector<Process>::iterator processIterator;
         bool finished;
         bool hard;
+        bool failed;
         stringstream buffer;
         priority_queue<Process*, vector<Process*>, RTComparator> queue;
         priority_queue<Process*, vector<Process*>, MinSlackComparator> topProcesses;
         bool addArrivedProcesses(int clockTime);
+        void addToTopProcesses(int deadline);
+        Process *getTopOfQueue();
 //        Process* getTopProcess();
 
 
