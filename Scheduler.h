@@ -41,8 +41,6 @@ public:
     void runMFQS();
 
     void setHandleIO(bool handleIo) { handleIO = handleIo; }
-    void setProccees(vector<Process>& allProcesses) { processes = allProcesses ;}
-    void setNumQueues(int nQueues) { numQueues = nQueues; }
     void setIoOffset(int ioOffset) { IoOffset = ioOffset; }
 };
 

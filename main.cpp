@@ -14,11 +14,14 @@ int main() {
             scheduler->setIoOffset(input.getIO_Offset());
         }
         scheduler->runMFQS();
+        free(scheduler);
     } else {
         bool hard = input.getRealTimeType() == 1;
         RTScheduler* scheduler = new RTScheduler(input.getProcesses(), hard, input.getMinArrival());
         scheduler->run();
+        free(scheduler);
     }
+
 
     return 0;
 };

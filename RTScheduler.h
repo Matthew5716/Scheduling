@@ -55,11 +55,9 @@ class RTScheduler {
         void setFailureTime(int time) { failureTime = std::min(failureTime, time);}
 
         Process *getTopOfQueue();
-//        Process* getTopProcess();
 
 
     public:
-//        RTScheduler();
         RTScheduler(vector<Process>& allProcesses, bool hard, int clockStart);
         void run();
 
